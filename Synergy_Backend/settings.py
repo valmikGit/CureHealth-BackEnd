@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'base',
     'api',
     'healthcare',
-    'phonenumber_field'
+    'phonenumber_field',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

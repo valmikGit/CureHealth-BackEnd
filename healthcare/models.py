@@ -1,12 +1,12 @@
 from collections.abc import Iterable
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.db.models.query import QuerySet
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
-class CustomAccountManager(UserManager):
+class CustomAccountManager(BaseUserManager):
     def create_superuser(self, email, username, password, **other_fields):
         other_fields.setdefault('is_staff', True)
         other_fields.setdefault('is_superuser', True)
@@ -47,11 +47,11 @@ class NewUser(AbstractUser):
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
     
-class DoctorManager(models.Manager):
+class DoctorManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs) -> QuerySet:
         return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.DOCTOR)
 
-class PatientManager(models.Manager):
+class PatientManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs) -> QuerySet:
         return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.PATIENT)
 
