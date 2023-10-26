@@ -5,5 +5,6 @@ from healthcare import views
 urlpatterns = [
     path('', view=views.home),
     path('doctors/', view=views.doctors),
-    path('patients/', view=views.patients)
+    path('patients/', view=views.patients),
+    path('allusers/', view=views.new_Users)
 ]
