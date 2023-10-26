@@ -1,5 +1,5 @@
 from collections.abc import Iterable
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models.query import QuerySet
 from django.urls import reverse
@@ -30,7 +30,7 @@ class CustomAccountManager(BaseUserManager):
         user.set_password(password)
         user.save()
         return user
-class NewUser(AbstractUser):
+class NewUser(AbstractUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=150, unique=True)
     
