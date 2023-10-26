@@ -83,3 +83,10 @@ class Doctor(NewUser):
     class Meta:
         verbose_name = "Doctor"
         verbose_name_plural = "Doctors"
+
+class Note(models.Model):
+    user = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
+    body = models.TextField()
+
+    def __str__(self) -> str:
+        return (f"{self.user.username}'s note")
