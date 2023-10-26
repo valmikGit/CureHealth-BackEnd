@@ -35,7 +35,7 @@ def createMember(request):
     member, created = RoomMember.objects.get_or_create(
         name=data['name'],
         uid=data['UID'],
-        room_name=data['room_name']
+        room_name=data['room_name'],
     )
 
     return JsonResponse({'name':data['name']}, safe=False)
