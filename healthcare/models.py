@@ -5,6 +5,8 @@ from django.db.models.query import QuerySet
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class CustomAccountManager(BaseUserManager):
     def create_superuser(self, email, username, password, **other_fields):
@@ -31,6 +33,8 @@ class CustomAccountManager(BaseUserManager):
         user.save()
         return user
 class NewUser(AbstractUser, PermissionsMixin):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=150, unique=True)
     
