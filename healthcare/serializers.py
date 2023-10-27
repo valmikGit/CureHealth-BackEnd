@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Doctor, Patient, NewUser
 
-
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
@@ -9,12 +8,12 @@ class DoctorSerializer(serializers.ModelSerializer):
             "password",
             "type",
             "is_staff",
-            "is_active",
+            # "is_active",
             "date_joined",
             "groups",
             "user_permissions",
             "last_login",
-            "is_superuser",
+            # "is_superuser",
             "id"
         ]
         depth = 1
@@ -27,12 +26,12 @@ class PatientSerializer(serializers.ModelSerializer):
             "password",
             "type",
             "is_staff",
-            "is_active",
+            # "is_active",
             "date_joined",
             "groups",
             "user_permissions",
             "last_login",
-            "is_superuser",
+            # "is_superuser",
             "id"
         ]
         delth = 1
@@ -43,13 +42,12 @@ class NewUserSerializer(serializers.ModelSerializer):
         exclude = [
             "password",
             "is_staff",
-            "is_active",
+            # "is_active",
             "date_joined",
             "groups",
             "user_permissions",
             "last_login",
-            "is_superuser",
+            # "is_superuser",
             "id"
         ]
         depth = 1
-        
