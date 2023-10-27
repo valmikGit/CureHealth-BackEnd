@@ -13,6 +13,7 @@ from django.core.mail import send_mail
 import uuid
 from django.conf import settings
 from healthcare.helpers import send_otp_to_mobile
+from django.contrib.auth.hashers import make_password
 
 class CustomAccountManager(BaseUserManager):
     def create_superuser(self, email, username, password, **other_fields):
@@ -36,6 +37,7 @@ class CustomAccountManager(BaseUserManager):
         other_fields.setdefault('is_active', True)
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **other_fields)
+        password = make_password(password=password)
         user.set_password(password)
         user.save(using=self._db)
         send_otp_to_mobile(mobile=user.phone_number, user_Obj=user)
