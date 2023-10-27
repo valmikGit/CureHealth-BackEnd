@@ -9,8 +9,8 @@ class RoomMember(models.Model):
     room_name = models.CharField(max_length=200, verbose_name="Room Name")
 
     def save(self, *args, **kwargs):
-        self.name = self.user.username
+        self.name = self.name
         super(RoomMember, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return self.user.username
+        return self.name
