@@ -6,6 +6,7 @@ from agora_token_builder import RtcTokenBuilder
 from .models import RoomMember
 import json
 from django.views.decorators.csrf import csrf_exempt
+from healthcare.models import NewUser
 
 # Create your views here.
 def lobby(request):
@@ -32,14 +33,24 @@ def getToken(request):
 @csrf_exempt
 def createMember(request):
     data = json.loads(request.body)
-    member, created = RoomMember.objects.get_or_create(
-        name=data['name'],
-        uid=data['UID'],
-        room_name=data['room_name']
+    # member, created = RoomMember.objects.get_or_create(
+    #     name=data['name'],
+    #     uid=data['UID'],
+    #     room_name=data['room_name'],
+    #     user=data['user']
+    # )
+    user, created = NewUser.objects.get_or_create(
+        username=data['user']['username'], 
+        email=data['user']['email']
     )
-
-    return JsonResponse({'name':data['name']}, safe=False)
-
+    member, created = RoomMember.objects.get_or_create(
+        name=user.username,
+        uid=data['UID'],
+        room_name = data['room_name'],
+        user=user
+    )
+    # return JsonResponse({'name':data['name']}, safe=False)
+    return JsonResponse({'name' : user.username}, safe=False)
 
 def getMember(request):
     uid = request.GET.get('UID')
