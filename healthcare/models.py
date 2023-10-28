@@ -56,6 +56,8 @@ class NewUser(AbstractUser, PermissionsMixin):
         DOCTOR = "DOCTOR", "Doctor"
         PATIENT = "PATIENT", "Patient"
         ADMIN = "ADMIN", "Admin"
+        INTERMEDIATE = "INTERMEDIATE", "Intermediate"
+    
     type = models.CharField(_("Type"), max_length=50, choices=Types.choices, default=Types.ADMIN)
 
     objects = CustomAccountManager()
@@ -72,6 +74,10 @@ class DoctorManager(BaseUserManager):
 class PatientManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs) -> QuerySet:
         return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.PATIENT)
+
+class IntermediateManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.INTERMEDIATE)
 
 class Patient(NewUser):
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
@@ -107,6 +113,20 @@ class Note(models.Model):
     def __str__(self) -> str:
         return (f"{self.user.username}'s note")
     
+
+class Intermediate(NewUser):
+    about = models.CharField(max_length=200)
+    objects = IntermediateManager()
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.type = NewUser.Types.INTERMEDIATE
+        return super().save(*args, **kwargs)
+    
+    class Meta:
+        verbose_name = "Intermediate person"
+        verbose_name_plural = "Intermediate people"
+
 @receiver(post_save, sender=NewUser)
 def send_Email_Token(sender, instance, created, **kwargs):
     if created:

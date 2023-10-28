@@ -2,7 +2,7 @@ const APP_ID = '141368df24c440a4bba7a746fecd703a'
 const TOKEN = sessionStorage.getItem('token')
 const CHANNEL = sessionStorage.getItem('room')
 let UID = Number(sessionStorage.getItem('UID'))
-
+let USER = sessionStorage.getItem('UserDetails')
 let NAME = sessionStorage.getItem('name')
 
 const client = AgoraRTC.createClient({
@@ -111,12 +111,16 @@ let createMember = async () => {
         headers: {
             'Content-Type':'application/json'
         },
-        body:JSON.stringify({'name':NAME, 'room_name':CHANNEL, 'UID':UID})
+        // body:JSON.stringify({'name':NAME, 'room_name':CHANNEL, 'UID':UID})
+        body:JSON.stringify({
+            'room_name' : CHANNEL,
+            'UID' : UID,
+            'USER' : USER
+        })
     })
     let member = await response.json()
     return member
 }
-
 
 let getMember = async (user) => {
     let response = await fetch(`/get_member/?UID=${user.uid}&room_name=${CHANNEL}`)
