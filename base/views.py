@@ -33,24 +33,24 @@ def getToken(request):
 @csrf_exempt
 def createMember(request):
     data = json.loads(request.body)
-    # member, created = RoomMember.objects.get_or_create(
-    #     name=data['name'],
-    #     uid=data['UID'],
-    #     room_name=data['room_name'],
-    #     user=data['user']
-    # )
-    user, created = NewUser.objects.get_or_create(
-        username=data['user']['username'], 
-        email=data['user']['email']
-    )
     member, created = RoomMember.objects.get_or_create(
-        name=user.username,
+        name=data['name'],
         uid=data['UID'],
-        room_name = data['room_name'],
-        user=user
+        room_name=data['room_name'],
+        # user=data['user']
     )
-    # return JsonResponse({'name':data['name']}, safe=False)
-    return JsonResponse({'name' : user.username}, safe=False)
+    # user, created = NewUser.objects.get_or_create(
+    #     username=data['user']['username'], 
+    #     email=data['user']['email']
+    # )
+    # member, created = RoomMember.objects.get_or_create(
+    #     name=user.username,
+    #     uid=data['UID'],
+    #     room_name = data['room_name'],
+    #     user=user
+    # )
+    # return JsonResponse({'name' : user.username}, safe=False)
+    return JsonResponse({'name':data['name']}, safe=False)
 
 def getMember(request):
     uid = request.GET.get('UID')
