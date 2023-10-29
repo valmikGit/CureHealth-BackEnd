@@ -14,6 +14,9 @@ import uuid
 from django.conf import settings
 from healthcare.helpers import send_otp_to_mobile
 from django.contrib.auth.hashers import make_password
+from datetime import datetime
+from django.utils import timezone
+from datetime import timedelta
 
 class CustomAccountManager(BaseUserManager):
     def create_superuser(self, email, username, password, **other_fields):
@@ -139,16 +142,21 @@ def send_Email_Token(sender, instance, created, **kwargs):
         except Exception as e:
             print(e)
 
-class Appointments(models.Model):
+class Appointment(models.Model):
     class MeetingType(models.TextChoices):
         CHAT = "CHAT", "Chat"
         VIDEOCALL = "VIDEOCALL", "Videocall"
     
     intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True)
     doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
-    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True)
-    meeting_Date = models.DateField(verbose_name="Meeting Date")
-    meeting_Time = models.TimeField(verbose_name="Meeting Time")
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
+    time_difference = timedelta(hours=5, minutes=30)  # Adjust this according to your time difference
+    server_time = timezone.now() - time_difference
+    metting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
     meeting_Type = models.CharField(_("Meeting type"), max_length=50, choices=MeetingType.choices, default=MeetingType.CHAT)
+
+    class Meta:
+        verbose_name = "Appointment"
+        verbose_name_plural = "Appointments"
 
     
