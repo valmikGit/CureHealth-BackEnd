@@ -1,18 +1,25 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from .models import Doctor, Patient, NewUser
-from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer
+from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer
 from rest_framework.response import Response
 from django.http import HttpResponse
 from healthcare.helpers import send_otp_to_mobile
+from django.http import JsonResponse
 # Create your views here.
 
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def patients(request):
     if request.method == 'GET':
-        patients = Patient.objects.all()
-        serializer = PatientSerializer(patients, many=True)
-        return Response(serializer.data)
+        severity = request.query_params.get('severity')
+        if severity is not None:
+            patients = Patient.objects.filter(severity=severity)
+            serializer = PatientSerializer(patients, many=True)
+            return Response(serializer.data)
+        else:   
+            patients = Patient.objects.all()
+            serializer = PatientSerializer(patients, many=True)
+            return Response(serializer.data)
     
     elif request.method == 'POST':
         data = request.data
@@ -66,9 +73,15 @@ def patients(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def doctors(request):
     if request.method == 'GET':
-        patients = Doctor.objects.all()
-        serializer = DoctorSerializer(patients, many=True)
-        return Response(serializer.data)
+        speciality = request.query_params.get('speciality', None)
+        if speciality is not None:
+            doctors = Doctor.objects.filter(speciality=speciality)
+            serializer = DoctorSerializer(doctors, many=True)
+            return Response(serializer.data)
+        else:
+            doctors = Doctor.objects.all()
+            serializer = DoctorSerializer(doctors, many=True)
+            return Response(serializer.data)
     
     elif request.method == 'POST':
         try:
@@ -225,4 +238,32 @@ def verify_OTP(request):
             'status' : 404,
             'message' : 'Something went wrong!'
         })
+
+@api_view(['GET'])
+def get_doctors_by_speciality(request):
+    if request.method == 'GET':
+        speciality = request.query_params.get('speciality', None)
+        if speciality is not None:
+            doctors = Doctor.objects.filter(speciality=speciality)
+            serializer = DoctorSerializer(doctors, many=True)
+            return Response(serializer.data)
+        else:
+            return JsonResponse({
+                'status' : 400,
+                'message' : 'Speciality not provided'
+            })
+        
+@api_view(['GET'])
+def get_patients_by_severity(request):
+    if request.method == "GET":
+        severity = request.query_params.get('severity', None)
+        if severity is not None:
+            patients = Patient.objects.filter(severity=severity)
+            serializer = AppointmentSerializer(patients, many=True)
+            return Response(serializer.data)
+        else:
+            return JsonResponse({
+                'status' : 400
+            })
+
  

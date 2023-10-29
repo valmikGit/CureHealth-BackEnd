@@ -83,8 +83,12 @@ class IntermediateManager(BaseUserManager):
         return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.INTERMEDIATE)
 
 class Patient(NewUser):
+    class SeverityType(models.TextChoices):
+        MILD = "MILD", "Mild",
+        SEVERE = "SEVERE", "Severe"
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
+    severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD)
     objects = PatientManager()
 
     def save(self, *args, **kwargs):
@@ -152,11 +156,13 @@ class Appointment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     time_difference = timedelta(hours=5, minutes=30)  # Adjust this according to your time difference
     server_time = timezone.now() - time_difference
-    metting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
+    meeting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
     meeting_Type = models.CharField(_("Meeting type"), max_length=50, choices=MeetingType.choices, default=MeetingType.CHAT)
 
     class Meta:
         verbose_name = "Appointment"
         verbose_name_plural = "Appointments"
+
+
 
     
