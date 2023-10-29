@@ -126,6 +126,12 @@ WSGI_APPLICATION = "Synergy_Backend.wsgi.application"
 
 ASGI_APPLICATION = 'Synergy_Backend.asgi.application'
 
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
