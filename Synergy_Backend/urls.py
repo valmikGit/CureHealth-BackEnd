@@ -18,8 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('', include('base.urls')),
-    path('chat/', include('chatApp.urls')),
-    path('ws/', include('chatApp.routing.websocket_urlpatterns'))
+    path('chat/', include('chatApp.urls'))
 ]
