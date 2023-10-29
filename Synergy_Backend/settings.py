@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "rest_framework_simplejwt",
+    "chatApp",
+    "channels"
 ]
 
 REST_fRAMEWORK = {
@@ -121,6 +123,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "Synergy_Backend.wsgi.application"
+
+ASGI_APPLICATION = 'Synergy_Backend.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND':'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 
 # Database

@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from healthcare.models import Note
+# from healthcare.models import Note
 
-class NoteSerializer(ModelSerializer):
-    class Meta:
-        model = Note
-        fields = '__all__'
+# class NoteSerializer(ModelSerializer):
+#     class Meta:
+#         model = Note
+#         fields = '__all__'

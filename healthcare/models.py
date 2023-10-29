@@ -14,6 +14,9 @@ import uuid
 from django.conf import settings
 from healthcare.helpers import send_otp_to_mobile
 from django.contrib.auth.hashers import make_password
+from datetime import datetime
+from django.utils import timezone
+from datetime import timedelta
 
 class CustomAccountManager(BaseUserManager):
     def create_superuser(self, email, username, password, **other_fields):
@@ -47,7 +50,7 @@ class NewUser(AbstractUser, PermissionsMixin):
     # permission_classes = [IsAuthenticated]
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=150, unique=True)
-    phone_number = PhoneNumberField(default='123456789')
+    phone_number = PhoneNumberField(default='1234567890')
     is_Email_Verified = models.BooleanField(default=False)
     is_Phone_Verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
@@ -106,12 +109,12 @@ class Doctor(NewUser):
         verbose_name = "Doctor"
         verbose_name_plural = "Doctors"
 
-class Note(models.Model):
-    user = models.ForeignKey(NewUser, on_delete=models.CASCADE, null=True)
-    body = models.TextField()
+# class Note(models.Model):
+#     user = models.ForeignKey(NewUser, on_delete=models.CASCADE, null=True)
+#     body = models.TextField()
 
-    def __str__(self) -> str:
-        return (f"{self.user.username}'s note")
+#     def __str__(self) -> str:
+#         return (f"{self.user.username}'s note")
     
 
 class Intermediate(NewUser):
@@ -138,3 +141,22 @@ def send_Email_Token(sender, instance, created, **kwargs):
             send_mail(subject=subject, message=message, from_email=email_from, recipient_list=recipient_list)
         except Exception as e:
             print(e)
+
+class Appointment(models.Model):
+    class MeetingType(models.TextChoices):
+        CHAT = "CHAT", "Chat"
+        VIDEOCALL = "VIDEOCALL", "Videocall"
+    
+    intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True)
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
+    time_difference = timedelta(hours=5, minutes=30)  # Adjust this according to your time difference
+    server_time = timezone.now() - time_difference
+    metting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
+    meeting_Type = models.CharField(_("Meeting type"), max_length=50, choices=MeetingType.choices, default=MeetingType.CHAT)
+
+    class Meta:
+        verbose_name = "Appointment"
+        verbose_name_plural = "Appointments"
+
+    
