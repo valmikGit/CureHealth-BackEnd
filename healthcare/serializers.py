@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Doctor, Patient, NewUser
+from .models import Doctor, Patient, NewUser, Appointment
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,7 +34,7 @@ class PatientSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
-        delth = 1
+        depth = 1
 
 class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,4 +50,10 @@ class NewUserSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
+        depth = 1
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'
         depth = 1
