@@ -32,7 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # "django.contrib.admin",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -199,12 +199,17 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'synergybackend1@gmail.com'
 EMAIL_HOST_PASSWORD = 'synergy_backend12'
 
-CACHES = {
-    "default" : {
-        "BACKEND" : "django_redis.cache.RedisCache",
-        "LOCATION" : "redis://127.0.0.1:6379/1",
-        "OPTIONS" : {
-            "CLIENT_CLASS" : "django_redis.client.DefaultClient",
-        }
-    }
-}
+# CACHES = {
+#     "default" : {
+#         "BACKEND" : "django_redis.cache.RedisCache",
+#         "LOCATION" : "redis://127.0.0.1:6379/1",
+#         "OPTIONS" : {
+#             "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
+
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+#     # Add any custom authentication backends here if applicable
+# ]
