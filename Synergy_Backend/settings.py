@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework_simplejwt",
     "chatApp",
-    "channels"
+    "channels",
+    "ChatConsumer"
 ]
 
 REST_fRAMEWORK = {
