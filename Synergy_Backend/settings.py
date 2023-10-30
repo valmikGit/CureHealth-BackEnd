@@ -133,18 +133,18 @@ ASGI_APPLICATION = 'Synergy_Backend.asgi.application'
 #     }
 # }
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-        'ROUTING': 'myproject.routing.application',
-        'OPTIONS': {
-            'expiry': 3600,
-        },
-    },
-}
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)],
+#         },
+#         'ROUTING': 'Synergy_Backend.routing.application',
+#         'OPTIONS': {
+#             'expiry': 3600,
+#         },
+#     },
+# }
 
 # CHANNELS = {
 #     "default": {
@@ -259,3 +259,12 @@ EMAIL_HOST_PASSWORD = 'synergy_backend12'
 #     'django.contrib.auth.backends.ModelBackend',
 #     # Add any custom authentication backends here if applicable
 # ]
+
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND' : 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts':[('127.0.0.1', 6739)]
+        }
+    }
+}
