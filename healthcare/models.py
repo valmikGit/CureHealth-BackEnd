@@ -57,7 +57,7 @@ class NewUser(AbstractUser, PermissionsMixin):
 
     # USERNAME_FIELD = 'username'
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
