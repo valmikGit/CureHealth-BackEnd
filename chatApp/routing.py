@@ -8,3 +8,7 @@ websocket_urlpatterns = [
 # websocket_urlpatterns = [
 #     re_path(r'ws/socket-server/', ChatConsumer.as_asgi())
 # ]
+
+websocket_urlpatterns = [
+    path('ws/socket-server/', consumers.ChatConsumer.as_asgi())
+]

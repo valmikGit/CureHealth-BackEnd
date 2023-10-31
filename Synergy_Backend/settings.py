@@ -46,10 +46,10 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "rest_framework_simplejwt",
-    "chatApp",
     "channels",
     "chatApp_2"
     # "ChatConsumer"
+    # "chatApp",
 ]
 
 REST_fRAMEWORK = {
