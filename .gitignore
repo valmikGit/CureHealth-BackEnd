@@ -1,5 +1,6 @@
 *.pyc
 Synergy_Backend_Venv
 myenv
+vaibhav
 migrations
 *.sqlite3
