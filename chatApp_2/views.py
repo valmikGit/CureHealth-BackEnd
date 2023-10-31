@@ -46,8 +46,8 @@ class GetMessages(generics.ListAPIView):
         receiver_id = self.request.query_params.get('receiver_id')
 
         messages = ChatMessage.objects.filter(
-            sender__in=[sender_id, receiver_id],
-            receiver__in=[receiver_id, sender_id]
+            sender_id=sender_id,
+            receiver_id=receiver_id
         )
 
         return messages
@@ -78,3 +78,4 @@ class SearchUser(generics.ListAPIView):
         
         serializer = self.get_serializer(users, many=True)
         return Response(serializer.data)
+    
