@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "chatApp",
     "channels",
+    "chatApp_2"
     # "ChatConsumer"
 ]
 
