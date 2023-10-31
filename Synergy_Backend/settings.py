@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -126,62 +127,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Synergy_Backend.wsgi.application"
 
-ASGI_APPLICATION = 'Synergy_Backend.asgi.application'
+ASGI_APPLICATION = 'Synergy_Backend.routing.application'
 
-# CHANNEL_LAYERS = {
-#     'default':{
-#         'BACKEND':'channels.layers.InMemoryChannelLayer'
-#     }
-# }
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [os.environ['REDIS_URL']],
+        },
+    },
+}
 
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             "hosts": [('127.0.0.1', 6379)],
-#         },
-#         'ROUTING': 'Synergy_Backend.routing.application',
-#         'OPTIONS': {
-#             'expiry': 3600,
-#         },
-#     },
-# }
-
-# CHANNELS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379)],
-#         },
-#     },
-# }
-
-# Set the log level for Django Channels
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         'django.channels': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ['REDIS_URL'],
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        }
+    }
+}
 
 DATABASES = {
     "default": {
