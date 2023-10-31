@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,8 +47,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "corsheaders",
     "rest_framework_simplejwt",
-    "chatApp",
-    "channels"
+    "channels",
+    "chatApp_2",
+    "verifyAuth"
+    # "ChatConsumer"
+    # "chatApp",
 ]
 
 REST_fRAMEWORK = {
@@ -124,17 +128,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "Synergy_Backend.wsgi.application"
 
-ASGI_APPLICATION = 'Synergy_Backend.asgi.application'
+ASGI_APPLICATION = 'Synergy_Backend.routing.application'
 
-CHANNEL_LAYERS = {
-    'default':{
-        'BACKEND':'channels.layers.InMemoryChannelLayer'
-    }
-}
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [os.environ['REDIS_URL']],
+#         },
+#     },
+# }
 
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": os.environ['REDIS_URL'],
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
+#         }
+#     }
+# }
 
 DATABASES = {
     "default": {
@@ -199,12 +212,26 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'synergybackend1@gmail.com'
 EMAIL_HOST_PASSWORD = 'synergy_backend12'
 
-CACHES = {
-    "default" : {
-        "BACKEND" : "django_redis.cache.RedisCache",
-        "LOCATION" : "redis://127.0.0.1:6379/1",
-        "OPTIONS" : {
-            "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+# CACHES = {
+#     "default" : {
+#         "BACKEND" : "django_redis.cache.RedisCache",
+#         "LOCATION" : "redis://127.0.0.1:6379/1",
+#         "OPTIONS" : {
+#             "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
+
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+#     # Add any custom authentication backends here if applicable
+# ]
+
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND' : 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts':[('127.0.0.1', 6739)]
         }
     }
 }

@@ -4,8 +4,9 @@ from django.http import JsonResponse
 # Create your views here.
 
 def lobby(request):
-    # return render(request=request, template_name='chat/lobby.html')
+    room_name = request.query_params.get('room_name')
     return JsonResponse({
         'status' : 200,
-        'message' : 'You have reached the lobby of the chat app.'
+        'message' : f"You have entered the {room_name} chat room."
     })
+

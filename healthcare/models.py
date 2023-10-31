@@ -5,14 +5,6 @@ from django.db.models.query import QuerySet
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticated
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.core.mail import send_mail
-import uuid
-from django.conf import settings
-from healthcare.helpers import send_otp_to_mobile
 from django.contrib.auth.hashers import make_password
 from datetime import datetime
 from django.utils import timezone
@@ -42,18 +34,16 @@ class CustomAccountManager(BaseUserManager):
         user = self.model(email=email, username=username, **other_fields)
         password = make_password(password=password)
         user.set_password(password)
-        user.save(using=self._db)
-        send_otp_to_mobile(mobile=user.phone_number, user_Obj=user)
+        user.save()
         return user
 class NewUser(AbstractUser, PermissionsMixin):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=150, unique=True)
     phone_number = PhoneNumberField(default='1234567890')
     is_Email_Verified = models.BooleanField(default=False)
     is_Phone_Verified = models.BooleanField(default=False)
     otp = models.CharField(max_length=6, null=True, blank=True)
+    id = models.AutoField(primary_key=True)
     
     class Types(models.TextChoices):
         DOCTOR = "DOCTOR", "Doctor"
@@ -65,7 +55,9 @@ class NewUser(AbstractUser, PermissionsMixin):
 
     objects = CustomAccountManager()
 
-    USERNAME_FIELD = 'username'
+    # USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
@@ -89,6 +81,7 @@ class Patient(NewUser):
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
     severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD)
+    disease = models.TextField(verbose_name="Information about disease", null=True)
     objects = PatientManager()
 
     def save(self, *args, **kwargs):
@@ -112,15 +105,7 @@ class Doctor(NewUser):
     class Meta:
         verbose_name = "Doctor"
         verbose_name_plural = "Doctors"
-
-# class Note(models.Model):
-#     user = models.ForeignKey(NewUser, on_delete=models.CASCADE, null=True)
-#     body = models.TextField()
-
-#     def __str__(self) -> str:
-#         return (f"{self.user.username}'s note")
     
-
 class Intermediate(NewUser):
     about = models.CharField(max_length=200)
     objects = IntermediateManager()
@@ -134,18 +119,6 @@ class Intermediate(NewUser):
         verbose_name = "Intermediate person"
         verbose_name_plural = "Intermediate people"
 
-@receiver(post_save, sender=NewUser)
-def send_Email_Token(sender, instance, created, **kwargs):
-    if created:
-        try:
-            subject = "Your email needs to be verified."
-            message = f"Hello, click on the link to verify your email: http://127.0.0.1:8000/{uuid.uuid4()}"
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = [instance.email]
-            send_mail(subject=subject, message=message, from_email=email_from, recipient_list=recipient_list)
-        except Exception as e:
-            print(e)
-
 class Appointment(models.Model):
     class MeetingType(models.TextChoices):
         CHAT = "CHAT", "Chat"
@@ -158,6 +131,7 @@ class Appointment(models.Model):
     server_time = timezone.now() - time_difference
     meeting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
     meeting_Type = models.CharField(_("Meeting type"), max_length=50, choices=MeetingType.choices, default=MeetingType.CHAT)
+    disease = models.TextField(verbose_name="Information about disease", null=True)
 
     class Meta:
         verbose_name = "Appointment"

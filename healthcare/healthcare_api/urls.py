@@ -14,7 +14,7 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('notes/', view=views.get_Notes),
     path('api-token-auth', view=auth_Token_Views.obtain_auth_token),
+    # path('notes/', view=views.get_Notes),
 ]
 

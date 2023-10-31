@@ -5,3 +5,5 @@ from chatApp.routing import websocket_urlpatterns
 urlpatterns = [
     path('', views.lobby)
 ]
+
+
