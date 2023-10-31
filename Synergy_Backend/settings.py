@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework_simplejwt",
     "channels",
-    "chatApp_2"
+    "chatApp_2",
+    "verifyAuth"
     # "ChatConsumer"
     # "chatApp",
 ]

@@ -81,6 +81,7 @@ class Patient(NewUser):
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
     severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD)
+    disease = models.TextField(verbose_name="Information about disease", null=True)
     objects = PatientManager()
 
     def save(self, *args, **kwargs):
@@ -130,6 +131,7 @@ class Appointment(models.Model):
     server_time = timezone.now() - time_difference
     meeting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
     meeting_Type = models.CharField(_("Meeting type"), max_length=50, choices=MeetingType.choices, default=MeetingType.CHAT)
+    disease = models.TextField(verbose_name="Information about disease", null=True)
 
     class Meta:
         verbose_name = "Appointment"
