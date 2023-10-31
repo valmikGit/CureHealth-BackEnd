@@ -9,3 +9,6 @@ def lobby(request):
         'status' : 200,
         'message' : 'You have reached the lobby of the chat app.'
     })
+
+# def chat_Room(request):
+#     room_Name = request.query_params.get('room_name')
