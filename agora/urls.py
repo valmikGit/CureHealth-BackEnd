@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from agora import views
 urlpatterns = [
     path(' ', views.index, name='agora-index'),
     path('pusher/auth/', views.pusher_auth, name='agora-pusher-auth'),

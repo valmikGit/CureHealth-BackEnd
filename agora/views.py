@@ -10,16 +10,26 @@ from django.shortcuts import render
 
 from .agora_key.RtcTokenBuilder import RtcTokenBuilder, Role_Attendee
 from pusher import Pusher
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Instantiate a Pusher Client
-pusher_client = Pusher(app_id=os.environ.get('PUSHER_APP_ID'),
-                       key=os.environ.get('PUSHER_KEY'),
-                       secret=os.environ.get('PUSHER_SECRET'),
-                       ssl=True,
-                       cluster=os.environ.get('PUSHER_CLUSTER')
-                       )
+# pusher_client = Pusher(app_id=os.environ.get('PUSHER_APP_ID'),
+#                        key=os.environ.get('PUSHER_KEY'),
+#                        secret=os.environ.get('PUSHER_SECRET'),
+#                        ssl=True,
+#                        cluster=os.environ.get('PUSHER_CLUSTER')
+#                        )
 
+pusher_client = Pusher(
+    app_id=os.getenv('PUSHER_APP_ID'),
+    key=os.getenv('PUSHER_KEY'),
+    secret=os.getenv('PUSHER_SECRET'),
+    cluster=os.getenv('PUSHER_CLUSTER')
+)
 
 @login_required(login_url='/admin/')
 def index(request):
