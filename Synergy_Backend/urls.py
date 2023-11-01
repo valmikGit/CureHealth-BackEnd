@@ -22,5 +22,5 @@ urlpatterns = [
     path('', include('base.urls')),
     path('chat/', include('chatApp.urls')),
     path('chat-2/', include('chatApp_2.urls')),
-    path('agora/', include('agora.urls'))
+    # path('agora/', include('agora.urls'))
 ]
