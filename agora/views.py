@@ -90,3 +90,13 @@ def call_user(request):
         }
     )
     return JsonResponse({'message': 'call has been placed'})
+
+@api_view(['GET'])
+def get_Agora_Routes(request):
+    routes = [
+        'index/',
+        'pusher/auth/',
+        'token/',
+        'call-user/',
+    ]
+    return Response(routes)
