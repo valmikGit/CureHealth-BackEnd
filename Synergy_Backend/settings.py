@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     "channels",
     "chatApp_2",
     "verifyAuth",
-    "videoCalling"
+    "agora"
     # "ChatConsumer"
     # "chatApp",
 ]

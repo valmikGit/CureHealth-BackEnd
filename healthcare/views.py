@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .models import Doctor, Patient, NewUser
-from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer
+from .models import Doctor, Patient, NewUser, Intermediate
+from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
 from rest_framework.response import Response
 from django.http import HttpResponse
 # from healthcare.helpers import send_otp_to_mobile
@@ -184,14 +184,76 @@ def new_Users(request):
                 return Response({'message' : f"{name} deleted successfully."})
             except Exception as e:
                 return Response({'message' : f"Error is {e}"})
+            
+@api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+def intermediates(request):
+    if request.method == 'GET':
+        speciality = request.query_params.get('speciality', None)
+        if speciality is not None:
+            doctors = Intermediate.objects.filter(speciality=speciality)
+            serializer = IntermediateSerializer(doctors, many=True)
+            return Response(serializer.data)
+        else:
+            doctors = Intermediate.objects.all()
+            serializer = IntermediateSerializer(doctors, many=True)
+            return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        try:
+            serializer = IntermediateSerializer(data=data)
+            if not serializer.is_valid():
+                return Response(serializer.errors)
+                # return Response({
+                #     'status' : 403,
+                #     'errors' : serializer.errors
+                # })
+            serializer.save()
+            return Response({
+                'status' : 200,
+                'message' : 'An OTP was sent to your number and email was sent for verification'
+            })
+        except Exception as e:
+            print(e)
+            return Response({
+                'status' : 200,
+                'error' : 'something went wrong'
+            })
+    
+    elif request.method == 'PUT':
+        data = request.data
+        serializer = IntermediateSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+    
+    elif request.method == 'PATCH':
+        data = request.data
+        obj = Intermediate.objects.get(id=data['id'])
+        serializer = IntermediateSerializer(obj, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+    
+    elif request.method == 'DELETE':
+        data = request.data
+        try:
+            obj = Intermediate.objects.get(id=data['id'])
+            name = obj.username
+            obj.delete()
+            return Response({'message' : f"{name} deleted successfully."})
+        except Exception as e:
+            return Response({'message' : f"Error is {e}"})
     
 @api_view(['GET'])
 def home(request):
     routes = [
-        'data/doctors/',
-        'data/patients/',
-        'data/verify-otp/',
-        'allusers/'
+        'doctors/',
+        'patients/',
+        'verify-otp/',
+        'allusers/',
+        'intermediates/'
     ]
     return Response(routes)
 

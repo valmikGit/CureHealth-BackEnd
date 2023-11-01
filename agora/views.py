@@ -1,7 +1,8 @@
 import os
 import time
 import json
-
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.http.response import JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -10,24 +11,38 @@ from django.shortcuts import render
 
 from .agora_key.RtcTokenBuilder import RtcTokenBuilder, Role_Attendee
 from pusher import Pusher
+from dotenv import load_dotenv
+from healthcare.models import NewUser
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Instantiate a Pusher Client
-pusher_client = Pusher(app_id=os.environ.get('PUSHER_APP_ID'),
-                       key=os.environ.get('PUSHER_KEY'),
-                       secret=os.environ.get('PUSHER_SECRET'),
-                       ssl=True,
-                       cluster=os.environ.get('PUSHER_CLUSTER')
-                       )
+# pusher_client = Pusher(app_id=os.environ.get('PUSHER_APP_ID'),
+#                        key=os.environ.get('PUSHER_KEY'),
+#                        secret=os.environ.get('PUSHER_SECRET'),
+#                        ssl=True,
+#                        cluster=os.environ.get('PUSHER_CLUSTER')
+#                        )
 
+pusher_client = Pusher(
+    app_id=os.getenv('PUSHER_APP_ID'),
+    key=os.getenv('PUSHER_KEY'),
+    secret=os.getenv('PUSHER_SECRET'),
+    cluster=os.getenv('PUSHER_CLUSTER')
+)
 
-@login_required(login_url='/admin/')
+@login_required(login_url='/admin/') # THIS LOGIN LINK IS CUSTOMIZABLE, PLEASE REMEMBER!!!!!
+@api_view(['GET'])
 def index(request):
-    User = get_user_model()
-    all_users = User.objects.exclude(id=request.user.id).only('id', 'username')
-    return render(request, 'agora/index.html', {'allUsers': all_users})
+    # User = get_user_model()
+    all_users = NewUser.objects.exclude(id=request.user.id).only('id', 'username')
+    users_data = [{'id': user.id, 'username': user.username} for user in all_users]
+    # return render(request, 'agora/index.html', {'allUsers': all_users})
+    return Response({'allUsers': users_data})
 
-
+@api_view(['POST'])
 def pusher_auth(request):
     payload = pusher_client.authenticate(
         channel=request.POST['channel_name'],
@@ -41,7 +56,7 @@ def pusher_auth(request):
         })
     return JsonResponse(payload)
 
-
+@api_view(['POST'])
 def generate_agora_token(request):
     appID = os.environ.get('AGORA_APP_ID')
     appCertificate = os.environ.get('AGORA_APP_CERTIFICATE')
@@ -57,7 +72,7 @@ def generate_agora_token(request):
 
     return JsonResponse({'token': token, 'appID': appID})
 
-
+@api_view(['POST'])
 def call_user(request):
     body = json.loads(request.body.decode('utf-8'))
 
@@ -75,3 +90,13 @@ def call_user(request):
         }
     )
     return JsonResponse({'message': 'call has been placed'})
+
+@api_view(['GET'])
+def get_Agora_Routes(request):
+    routes = [
+        'index/',
+        'pusher/auth/',
+        'token/',
+        'call-user/',
+    ]
+    return Response(routes)
