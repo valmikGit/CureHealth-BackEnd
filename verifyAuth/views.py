@@ -1,11 +1,14 @@
 import pyotp
 from healthcare.models import NewUser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import OTP
 
+@api_view(['POST'])
 def send_otp(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -38,6 +41,7 @@ def send_otp(request):
     else:
         return render(request, 'send_otp.html')
     
+@api_view(['POST'])
 def verify_otp(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -65,3 +69,11 @@ def verify_otp(request):
             return render(request, 'verify_otp.html', {'message': 'OTP not found'})
     else:
         return render(request, 'verify_otp.html')
+    
+@api_view(['GET'])
+def get_Routes(request):
+    routes = [
+        'send-otp/',
+        'verify-otp/'
+    ]
+    return Response(routes)
