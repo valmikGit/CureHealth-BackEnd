@@ -52,9 +52,8 @@ INSTALLED_APPS = [
     "channels",
     "chatApp_2",
     "verifyAuth",
-    "agora"
-    # "ChatConsumer"
-    # "chatApp",
+    "agora",
+    "chatApp",
 ]
 
 REST_fRAMEWORK = {
@@ -133,25 +132,6 @@ WSGI_APPLICATION = "Synergy_Backend.wsgi.application"
 
 ASGI_APPLICATION = 'Synergy_Backend.routing.application'
 
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             "hosts": [os.environ['REDIS_URL']],
-#         },
-#     },
-# }
-
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": os.environ['REDIS_URL'],
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
-#         }
-#     }
-# }
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -215,26 +195,23 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'synergybackend1@gmail.com'
 EMAIL_HOST_PASSWORD = 'synergy_backend12'
 
-# CACHES = {
-#     "default" : {
-#         "BACKEND" : "django_redis.cache.RedisCache",
-#         "LOCATION" : "redis://127.0.0.1:6379/1",
-#         "OPTIONS" : {
-#             "CLIENT_CLASS" : "django_redis.client.DefaultClient",
-#         }
-#     }
-# }
-
-# AUTHENTICATION_BACKENDS = [
-#     'django.contrib.auth.backends.ModelBackend',
-#     # Add any custom authentication backends here if applicable
-# ]
-
 CHANNEL_LAYERS = {
-    'default' : {
-        'BACKEND' : 'channels_redis.core.RedisChannelLayer',
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts':[('127.0.0.1', 6739)]
+            # "hosts": [os.environ['REDIS_URL']],
+            "hosts" : [os.getenv('REDIS_URL')]
+        },
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        # "LOCATION": os.environ['REDIS_URL'],
+        "LOCATION" : os.getenv('REDIS_URL'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
     }
 }
