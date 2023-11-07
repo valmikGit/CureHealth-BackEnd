@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.urls import path
 from healthcare import views
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-    TokenObtainPairView
-)
+# from rest_framework_simplejwt.views import (
+#     TokenRefreshView,
+#     TokenObtainPairView
+# )
 
 urlpatterns = [
     path('', view=views.home),

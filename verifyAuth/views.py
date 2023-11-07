@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from .models import OTP
+from Synergy_Backend import settings
 
 @api_view(['POST'])
 def send_otp(request):
@@ -28,7 +29,7 @@ def send_otp(request):
             # Send OTP via email
             subject = 'Your OTP for Login'
             message = f'Your OTP for login is: {otp_code}'
-            from_email = 'your@email.com'  # Update with your email
+            from_email = settings.EMAIL_HOST_USER  # Update with your email
             recipient_list = [email]
 
             # Add Phone OTP API
@@ -37,9 +38,16 @@ def send_otp(request):
 
             return redirect('verify_otp')
         else:
-            return render(request, 'send_otp.html', {'message': 'Email not found'})
+            # return render(request, 'send_otp.html', {'message': 'Email not found'})
+            return Response({
+                'status' : 404,
+                'message' : 'Email not found'
+            })
     else:
-        return render(request, 'send_otp.html')
+        # return render(request, 'send_otp.html')
+        return Response({
+            'message' : 'You reached the send otp page.'
+        })
     
 @api_view(['POST'])
 def verify_otp(request):
@@ -60,15 +68,31 @@ def verify_otp(request):
                 user = authenticate(request, username=otp_obj.user.username, password='')
                 if user:
                     login(request, user)
-                    return redirect('home')  # Replace 'home' with the URL name of your home page
+                    # return redirect('home') Replace 'home' with the URL name of your home page
+                    return Response({
+                        'message' : 'You are being redirected to the home page.'
+                    })
                 else:
-                    return redirect('login')  # Replace 'login' with the URL name of your home page
+                    # return redirect('login') Replace 'login' with the URL name of your home page
+                    return Response({
+                        'message' : 'You are being redirected to the login page.'
+                    })
             else:
-                return render(request, 'verify_otp.html', {'message': 'Invalid OTP'})
+                # return render(request, 'verify_otp.html', {'message': 'Invalid OTP'})
+                return Response({
+                    'message' : 'Invalid OTP'
+                })
         else:
-            return render(request, 'verify_otp.html', {'message': 'OTP not found'})
+            # return render(request, 'verify_otp.html', {'message': 'OTP not found'})
+            return Response({
+                'status' : 404,
+                'message' : 'OTP not found. You are being redirected to the verify otp page.'
+            })
     else:
-        return render(request, 'verify_otp.html')
+        # return render(request, 'verify_otp.html')
+        return Response({
+            'message' : 'You reached the verify otp page'
+        })
     
 @api_view(['GET'])
 def get_Routes(request):
