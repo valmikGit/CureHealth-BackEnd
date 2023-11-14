@@ -80,8 +80,8 @@ class Patient(NewUser):
         SEVERE = "SEVERE", "Severe"
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
-    severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD)
-    disease = models.TextField(verbose_name="Information about disease", null=True)
+    severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD, blank=True, null=True)
+    disease = models.TextField(verbose_name="Information about disease", null=True, blank=True)
     objects = PatientManager()
 
     def save(self, *args, **kwargs):
