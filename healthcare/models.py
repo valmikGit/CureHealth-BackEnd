@@ -73,6 +73,31 @@ class PatientManager(BaseUserManager):
 class IntermediateManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs) -> QuerySet:
         return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.INTERMEDIATE)
+    
+class AppointmentManager(BaseUserManager):
+    def upcoming_appointments(self):
+        """
+        Get a queryset for all upcoming appointments.
+        """
+        return self.filter(meeting_Date_Time__gt=timezone.now())
+
+    def past_appointments(self):
+        """
+        Get a queryset for all past appointments.
+        """
+        return self.filter(meeting_Date_Time__lt=timezone.now())
+
+    def chat_appointments(self):
+        """
+        Get a queryset for all appointments of type CHAT.
+        """
+        return self.filter(meeting_Type=Appointment.MeetingType.CHAT)
+
+    def videocall_appointments(self):
+        """
+        Get a queryset for all appointments of type VIDEOCALL.
+        """
+        return self.filter(meeting_Type=Appointment.MeetingType.VIDEOCALL)
 
 class Patient(NewUser):
     class SeverityType(models.TextChoices):
@@ -124,14 +149,31 @@ class Appointment(models.Model):
         CHAT = "CHAT", "Chat"
         VIDEOCALL = "VIDEOCALL", "Videocall"
     
-    intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True)
-    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
+    intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True, blank=True)
+    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
     time_difference = timedelta(hours=5, minutes=30)  # Adjust this according to your time difference
     server_time = timezone.now() - time_difference
     meeting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
     meeting_Type = models.CharField(_("Meeting type"), max_length=50, choices=MeetingType.choices, default=MeetingType.CHAT)
     disease = models.TextField(verbose_name="Information about disease", null=True)
+    video_URL = models.URLField(verbose_name="Meet link", blank=True, null=True)
+    objects = AppointmentManager()
+
+    def save(self, *args, **kwargs):
+        # if self.meeting_Type == Appointment.MeetingType.VIDEOCALL and not self.video_URL:
+        #     # If it's a videocall appointment and no video_URL is provided, set it based on the frontend value
+        #     # Assuming you have a field in the frontend named 'frontend_video_url', replace it with your actual field
+        #     video_URL = getattr(self, 'video_URL', None)
+            
+        #     if frontend_video_url:
+        #         self.video_URL = video_URL
+        #     else:
+        #         # Handle the case where no video_URL is provided from the frontend
+        #         raise ValueError("Video URL is required for videocall appointments.")
+
+        # # You can add more custom logic as needed
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Appointment"
