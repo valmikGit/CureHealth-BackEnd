@@ -42,7 +42,7 @@ class NewUser(AbstractUser, PermissionsMixin):
     phone_number = PhoneNumberField(default='1234567890')
     is_Email_Verified = models.BooleanField(default=False)
     is_Phone_Verified = models.BooleanField(default=False)
-    otp = models.CharField(max_length=6, null=True, blank=True)
+    # otp = models.CharField(max_length=6, null=True, blank=True)
     id = models.AutoField(primary_key=True)
     
     class Types(models.TextChoices):
