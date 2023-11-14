@@ -32,7 +32,7 @@ class CustomAccountManager(BaseUserManager):
         other_fields.setdefault('is_active', True)
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **other_fields)
-        password = make_password(password=password)
+        # password = make_password(password=password)
         user.set_password(password)
         user.save()
         return user
