@@ -12,12 +12,13 @@ from django.http import JsonResponse
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def patients(request):
     if request.method == 'GET':
-        user_Id = request.query_params.get('id', None)
-        if id is not None:
-            patients = Patient.objects.filter(id=user_Id)
+        severity = request.query_params.get('severity', None)
+        if severity is not None:
+            patients = Patient.objects.filter(severity=severity)
             serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data)
-        else:   
+        else:
+            print("Severity is none.")   
             patients = Patient.objects.all()
             serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data)
@@ -75,9 +76,9 @@ def patients(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def doctors(request):
     if request.method == 'GET':
-        user_Id = request.query_params.get('id', None)
-        if user_Id is not None:
-            doctors = Doctor.objects.filter(id=user_Id)
+        speciality = request.query_params.get('speciality', None)
+        if speciality is not None:
+            doctors = Doctor.objects.filter(speciality=speciality)
             serializer = DoctorSerializer(doctors, many=True)
             return Response(serializer.data)
         else:
@@ -136,7 +137,7 @@ def doctors(request):
         
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def new_Users(request):
-    user_id = request.query_params.get('id')
+    user_id = request.query_params.get('id', None)
     if user_id is not None:
         try:
             new_User = NewUser.objects.filter(id=user_id)
@@ -192,14 +193,14 @@ def new_Users(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def intermediates(request):
     if request.method == 'GET':
-        user_Id = request.query_params.get('id', None)
-        if user_Id is not None:
-            doctors = Intermediate.objects.filter(id=user_Id)
-            serializer = IntermediateSerializer(doctors, many=True)
+        username = request.query_params.get('username', None)
+        if username is not None:
+            intermediate_People = Intermediate.objects.filter(username=username)
+            serializer = IntermediateSerializer(intermediate_People, many=True)
             return Response(serializer.data)
         else:
-            doctors = Intermediate.objects.all()
-            serializer = IntermediateSerializer(doctors, many=True)
+            intermediate_People = Intermediate.objects.all()
+            serializer = IntermediateSerializer(intermediate_People, many=True)
             return Response(serializer.data)
     
     elif request.method == 'POST':
