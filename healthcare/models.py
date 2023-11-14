@@ -32,7 +32,7 @@ class CustomAccountManager(BaseUserManager):
         other_fields.setdefault('is_active', True)
         email = self.normalize_email(email)
         user = self.model(email=email, username=username, **other_fields)
-        password = make_password(password=password)
+        # password = make_password(password=password)
         user.set_password(password)
         user.save()
         return user
@@ -42,7 +42,7 @@ class NewUser(AbstractUser, PermissionsMixin):
     phone_number = PhoneNumberField(default='1234567890')
     is_Email_Verified = models.BooleanField(default=False)
     is_Phone_Verified = models.BooleanField(default=False)
-    otp = models.CharField(max_length=6, null=True, blank=True)
+    # otp = models.CharField(max_length=6, null=True, blank=True)
     id = models.AutoField(primary_key=True)
     
     class Types(models.TextChoices):
@@ -80,8 +80,8 @@ class Patient(NewUser):
         SEVERE = "SEVERE", "Severe"
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
-    severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD)
-    disease = models.TextField(verbose_name="Information about disease", null=True)
+    severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD, blank=True, null=True)
+    disease = models.TextField(verbose_name="Information about disease", null=True, blank=True)
     objects = PatientManager()
 
     def save(self, *args, **kwargs):

@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import Doctor, Patient, NewUser, Appointment, Intermediate
+from .models import Doctor, Patient, NewUser, Appointment, Intermediate, CustomAccountManager
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         exclude = [
-            "password",
+            # "password",
             "type",
             "is_staff",
             # "is_active",
@@ -18,12 +18,11 @@ class DoctorSerializer(serializers.ModelSerializer):
         ]
         depth = 1
 
-
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         exclude = [
-            "password",
+            # "password",
             "type",
             "is_staff",
             # "is_active",
@@ -40,7 +39,24 @@ class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewUser
         exclude = [
-            "password",
+            # "password",
+            "is_staff",
+            # "is_active",
+            "date_joined",
+            "groups",
+            "user_permissions",
+            "last_login",
+            # "is_superuser",
+            "id"
+        ]
+        depth = 1
+
+class IntermediateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Intermediate
+        exclude = [
+            # "password",
+            "type",
             "is_staff",
             # "is_active",
             "date_joined",
@@ -56,21 +72,4 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = '__all__'
-        depth = 1
-
-class IntermediateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Intermediate
-        exclude = [
-            "password",
-            "type",
-            "is_staff",
-            # "is_active",
-            "date_joined",
-            "groups",
-            "user_permissions",
-            "last_login",
-            # "is_superuser",
-            "id"
-        ]
         depth = 1

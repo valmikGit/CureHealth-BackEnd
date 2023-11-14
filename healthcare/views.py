@@ -4,6 +4,7 @@ from .models import Doctor, Patient, NewUser, Intermediate
 from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
 from rest_framework.response import Response
 from django.http import HttpResponse
+from django.contrib.auth.hashers import make_password
 # from healthcare.helpers import send_otp_to_mobile
 from django.http import JsonResponse
 # Create your views here.
@@ -30,10 +31,11 @@ def patients(request):
                     'status' : 403,
                     'errors' : serializer.errors
                 })
+            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'An OTP was sent to your number and email was sent for verification'
+                'message' : 'User added to database, GET to check whether database was updated.'
             })
         except Exception as e:
             print(e)
@@ -87,11 +89,12 @@ def doctors(request):
         try:
             serializer = DoctorSerializer(data=data)
             if not serializer.is_valid():
-                return Response(serializer.errors)
-                # return Response({
-                #     'status' : 403,
-                #     'errors' : serializer.errors
-                # })
+                # return Response(serializer.errors)
+                return Response({
+                    'status' : 403,
+                    'errors' : serializer.errors
+                })
+            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
             serializer.save()
             return Response({
                 'status' : 200,
@@ -154,6 +157,7 @@ def new_Users(request):
             data = request.data
             serializer = NewUserSerializer(data=data)
             if serializer.is_valid():
+                serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors)
@@ -202,11 +206,12 @@ def intermediates(request):
         try:
             serializer = IntermediateSerializer(data=data)
             if not serializer.is_valid():
-                return Response(serializer.errors)
-                # return Response({
-                #     'status' : 403,
-                #     'errors' : serializer.errors
-                # })
+                # return Response(serializer.errors)
+                return Response({
+                    'status' : 403,
+                    'errors' : serializer.errors
+                })
+            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
             serializer.save()
             return Response({
                 'status' : 200,
