@@ -33,7 +33,7 @@ pusher_client = Pusher(
     cluster=os.getenv('PUSHER_CLUSTER')
 )
 
-@login_required(login_url='/admin/') # THIS LOGIN LINK IS CUSTOMIZABLE, PLEASE REMEMBER!!!!!
+@login_required(login_url='/login/') # THIS LOGIN LINK IS CUSTOMIZABLE, PLEASE REMEMBER!!!!!
 @api_view(['GET'])
 def index(request):
     # User = get_user_model()
