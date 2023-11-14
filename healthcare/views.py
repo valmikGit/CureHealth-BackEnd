@@ -12,9 +12,9 @@ from django.http import JsonResponse
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def patients(request):
     if request.method == 'GET':
-        severity = request.query_params.get('severity')
-        if severity is not None:
-            patients = Patient.objects.filter(severity=severity)
+        user_Id = request.query_params.get('id', None)
+        if id is not None:
+            patients = Patient.objects.filter(id=user_Id)
             serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data)
         else:   
@@ -75,9 +75,9 @@ def patients(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def doctors(request):
     if request.method == 'GET':
-        speciality = request.query_params.get('speciality', None)
-        if speciality is not None:
-            doctors = Doctor.objects.filter(speciality=speciality)
+        user_Id = request.query_params.get('id', None)
+        if user_Id is not None:
+            doctors = Doctor.objects.filter(id=user_Id)
             serializer = DoctorSerializer(doctors, many=True)
             return Response(serializer.data)
         else:
@@ -192,9 +192,9 @@ def new_Users(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def intermediates(request):
     if request.method == 'GET':
-        speciality = request.query_params.get('speciality', None)
-        if speciality is not None:
-            doctors = Intermediate.objects.filter(speciality=speciality)
+        user_Id = request.query_params.get('id', None)
+        if user_Id is not None:
+            doctors = Intermediate.objects.filter(id=user_Id)
             serializer = IntermediateSerializer(doctors, many=True)
             return Response(serializer.data)
         else:
