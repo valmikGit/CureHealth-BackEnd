@@ -5,7 +5,7 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         exclude = [
-            "password",
+            # "password",
             "type",
             "is_staff",
             # "is_active",
@@ -23,7 +23,7 @@ class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         exclude = [
-            "password",
+            # "password",
             "type",
             "is_staff",
             # "is_active",
@@ -40,7 +40,7 @@ class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewUser
         exclude = [
-            "password",
+            # "password",
             "is_staff",
             # "is_active",
             "date_joined",
@@ -62,7 +62,7 @@ class IntermediateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Intermediate
         exclude = [
-            "password",
+            # "password",
             "type",
             "is_staff",
             # "is_active",
