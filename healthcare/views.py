@@ -33,7 +33,7 @@ def patients(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'An OTP was sent to your number and email was sent for verification'
+                'message' : 'User added to database, GET to check whether database was updated.'
             })
         except Exception as e:
             print(e)
