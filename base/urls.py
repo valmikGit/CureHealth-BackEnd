@@ -9,6 +9,6 @@ urlpatterns = [
     path('create_member/', views.createMember),
     path('get_member/', views.getMember),
     path('delete_member/', views.deleteMember),
-    path('data/', include('healthcare.urls')),
+    path('register/', include('healthcare.urls')),
     path('healthcare_api/', include('healthcare.healthcare_api.urls'))
 ]
