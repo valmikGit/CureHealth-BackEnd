@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import Doctor, Patient, NewUser, Appointment, Intermediate
+from .models import Doctor, Patient, NewUser, Appointment, Intermediate, CustomAccountManager
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         exclude = [
-            # "password",
+            "password",
             "type",
             "is_staff",
             # "is_active",
@@ -16,14 +16,17 @@ class DoctorSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
+        extra_kwargs = {'password' : {'write_only' : True}}
         depth = 1
-
+    
+    def create(self, validated_data):
+        return CustomAccountManager().create_user(**validated_data)
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         exclude = [
-            # "password",
+            "password",
             "type",
             "is_staff",
             # "is_active",
@@ -34,13 +37,17 @@ class PatientSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
+        extra_kwargs = {'password' : {'write_only' : True}}
         depth = 1
+
+    def create(self, validated_data):
+        return CustomAccountManager().create_user(**validated_data)
 
 class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewUser
         exclude = [
-            # "password",
+            "password",
             "is_staff",
             # "is_active",
             "date_joined",
@@ -50,19 +57,17 @@ class NewUserSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
+        extra_kwargs = {'password' : {'write_only' : True}}
         depth = 1
 
-class AppointmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Appointment
-        fields = '__all__'
-        depth = 1
+    def create(self, validated_data):
+        return CustomAccountManager().create_user(**validated_data)
 
 class IntermediateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Intermediate
         exclude = [
-            # "password",
+            "password",
             "type",
             "is_staff",
             # "is_active",
@@ -73,4 +78,14 @@ class IntermediateSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
+        extra_kwargs = {'password' : {'write_only' : True}}
+        depth = 1
+
+    def create(self, validated_data):
+        return CustomAccountManager().create_user(**validated_data)
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'
         depth = 1
