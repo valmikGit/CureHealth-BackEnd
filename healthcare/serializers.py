@@ -16,12 +16,7 @@ class DoctorSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
-        extra_kwargs = {'password' : {'write_only' : True}}
         depth = 1
-    
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        return CustomAccountManager().create_user(password=password, **validated_data)
 
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -38,12 +33,7 @@ class PatientSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
-        extra_kwargs = {'password' : {'write_only' : True}}
         depth = 1
-
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        return CustomAccountManager().create_user(password=password, **validated_data)
 
 class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,12 +49,7 @@ class NewUserSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
-        extra_kwargs = {'password' : {'write_only' : True}}
         depth = 1
-
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        return CustomAccountManager().create_user(password=password, **validated_data)
 
 class IntermediateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,12 +66,7 @@ class IntermediateSerializer(serializers.ModelSerializer):
             # "is_superuser",
             "id"
         ]
-        extra_kwargs = {'password' : {'write_only' : True}}
         depth = 1
-
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        return CustomAccountManager().create_user(password=password, **validated_data)
 
 class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
