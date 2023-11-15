@@ -18,7 +18,7 @@ def patients(request):
             patients = NewUser.objects.filter(id=patient_Id)
             # serializer = PatientSerializer(patients, many=True)
             # serializer = PatientSerializer(patients)
-            serializer = NewUserSerializer(patients)
+            serializer = NewUserSerializer(patients, many=True)
             return Response(serializer.data)
         else:
             print("patient id is none.") 
