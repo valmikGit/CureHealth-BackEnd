@@ -48,6 +48,7 @@ class PatientViewSerializer(serializers.ModelSerializer):
             "user_permissions",
             "last_login",
             "is_superuser",
+            "email"
         ]
 
 class NewUserSerializer(serializers.ModelSerializer):
