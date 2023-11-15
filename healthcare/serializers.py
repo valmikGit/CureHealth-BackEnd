@@ -35,6 +35,21 @@ class PatientSerializer(serializers.ModelSerializer):
         ]
         depth = 1
 
+class PatientViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        exclude = [
+            "password",
+            "type",
+            "is_staff",
+            "is_active",
+            "date_joined",
+            "groups",
+            "user_permissions",
+            "last_login",
+            "is_superuser",
+        ]
+
 class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewUser

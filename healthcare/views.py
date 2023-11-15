@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from .models import Doctor, Patient, NewUser, Intermediate, Appointment
-from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
+from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer, PatientViewSerializer
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
@@ -17,12 +17,14 @@ def patients(request):
         if patient_Id is not None:
             patients = Patient.objects.filter(id=patient_Id)
             # serializer = PatientSerializer(patients, many=True)
-            serializer = PatientSerializer(patients)
+            # serializer = PatientSerializer(patients)
+            serializer = PatientViewSerializer(patients)
             return Response(serializer.data)
         else:
             print("id is none.") 
             patients = Patient.objects.all()
-            serializer = PatientSerializer(patients, many=True)
+            # serializer = PatientSerializer(patients, many=True)
+            serializer = PatientViewSerializer(patients, many=True)
             return Response(serializer.data)
     
     elif request.method == 'POST':
