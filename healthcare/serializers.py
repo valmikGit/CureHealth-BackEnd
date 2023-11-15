@@ -40,7 +40,7 @@ class PatientViewSerializer(serializers.ModelSerializer):
         model = Patient
         exclude = [
             "password",
-            "type",
+            # "type",
             "is_staff",
             "is_active",
             "date_joined",
@@ -48,8 +48,12 @@ class PatientViewSerializer(serializers.ModelSerializer):
             "user_permissions",
             "last_login",
             "is_superuser",
-            "email"
+            "email",
+            "phone_number",
+            "is_Email_Verified",
+            "is_Phone_Verified",
         ]
+        depth = 1
 
 class NewUserSerializer(serializers.ModelSerializer):
     class Meta:
