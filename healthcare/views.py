@@ -82,9 +82,14 @@ def doctors(request):
     if request.method == 'GET':
         # speciality = request.query_params.get('speciality', None)
         doctor_Id = request.GET.get('id', None)
+        specialization = request.GET.get('specialization', None)
         if doctor_Id is not None:
             doctors = NewUser.objects.filter(id=doctor_Id)
             serializer = NewUserSerializer(doctors, many=True)
+            return Response(serializer.data)
+        elif specialization is not None:
+            doctors = Doctor.objects.filter(specialization=specialization)
+            serializer = DoctorSerializer(doctors, many=True)
             return Response(serializer.data)
         else:
             doctors = Doctor.objects.all()

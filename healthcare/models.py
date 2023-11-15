@@ -100,7 +100,7 @@ class AppointmentManager(BaseUserManager):
 
 class Patient(NewUser):
     class SeverityType(models.TextChoices):
-        MILD = "MILD", "Mild",
+        MILD = "MILD", "Mild"
         SEVERE = "SEVERE", "Severe"
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
@@ -117,8 +117,20 @@ class Patient(NewUser):
         verbose_name = "Patient"
         verbose_name_plural = "Patients"
 class Doctor(NewUser):
+    class Specialization(models.TextChoices):
+        CARDIOLOGIST = "CARDIOLOGIST", "Cardiologist"
+        DERMATOLOGIST = "DERMATOLOGIST", "Dermatologist"
+        ORTHOPEDIC = "ORTHOPEDIC", "Orthopedic"
+        GYNECOLOGIST = "GYNECOLOGIST", "Gynecologist"
+        NEUROLOGIST = "NEUROLOGIST", "Neurologist"
+        OPHTHALMOLOGIST = "OPHTHALMOLOGIST", "Ophthalmologist"
+        ENT = "ENT", "Ent"
+        GASTROENTEROLOGIST = "GASTROENTEROLOGIST", "Gastroenterologist"
+        PSYCHIATRIST = "PSYCHIATRIST", "Psychiatrist"
+        ENDOCRINOLOGIST = "ENDOCRINOLOGIST", "Endocrinologist"   
+
     about = models.CharField(max_length=200)
-    speciality = models.CharField(max_length=100)
+    specialization = models.CharField(_("Speciality"), max_length=20, choices=Specialization.choices, default=Specialization.CARDIOLOGIST, blank=True, null=True)
     objects = DoctorManager()
 
     def save(self, *args, **kwargs):
@@ -148,9 +160,11 @@ class Appointment(models.Model):
         CHAT = "CHAT", "Chat"
         VIDEOCALL = "VIDEOCALL", "Videocall"
     
-    intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True, blank=True)
-    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
+    # intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True, blank=True)
+    # doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
+    # patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
+    patient_ID = models.IntegerField(default=0, null=True, blank=True)
+    doctor_Intermediate_ID = models.IntegerField(default=0, null=True, blank=True)
     time_difference = timedelta(hours=5, minutes=30)  # Adjust this according to your time difference
     server_time = timezone.now() - time_difference
     meeting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)
