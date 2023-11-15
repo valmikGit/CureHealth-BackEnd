@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from .models import Doctor, Patient, NewUser, Intermediate, Appointment
-from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer, PatientViewSerializer
+from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
