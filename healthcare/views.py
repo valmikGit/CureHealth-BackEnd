@@ -24,7 +24,7 @@ def patients(request):
                 'blood_Group' : patients.blood_Group,
                 'gender' : patients.gender,
                 'disease' : patients.disease,
-                'patient_As_NewUser' : Response(serializer.data)
+                'patient_As_NewUser' : patients
             })
         else: 
             patients = Patient.objects.all()
@@ -97,7 +97,7 @@ def doctors(request):
                 'about' : doctors.about,
                 'specialization' : doctors.specialization,
                 'is_Free' : doctors.is_Free,
-                'doctor_As_NewUser' : Response(serializer.data)
+                'doctor_As_NewUser' : doctors,
             })
         elif specialization is not None:
             doctors = Doctor.objects.filter(specialization=specialization)
