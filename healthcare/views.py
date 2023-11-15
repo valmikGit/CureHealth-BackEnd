@@ -278,7 +278,8 @@ def appointments_View(request):
         #     patients = Appointment.objects.all()
         #     serializer = AppointmentSerializer(patients, many=True)
         #     return Response(serializer.data)
-        appointment_Filter = request.query_params.get('filter', None)
+        # appointment_Filter = request.query_params.get('filter', None)
+        appointment_Filter = request.GET.get('filter', None)
         if appointment_Filter is not None:
             if appointment_Filter == "upcoming":
                 appointments = Appointment.objects.upcoming_appointments()
@@ -311,6 +312,8 @@ def appointments_View(request):
                     'errors' : serializer.errors
                 })
             serializer.save()
+            doctor = Doctor.objects.filter(id=serializer.data['doctor_Intermediate_ID'])
+            doctor.is_Free = False
             return Response({
                 'status' : 200,
                 'message' : 'Appointment added to database, GET to check whether database was updated.',
