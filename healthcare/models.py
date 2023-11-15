@@ -23,7 +23,6 @@ class CustomAccountManager(BaseUserManager):
                 'Superuser must be assigned to is_superuser=True.')
 
         return self.create_user(email, username, password, **other_fields)
-
     def create_user(self, email, username, password, **other_fields):
         if not email:
             raise ValueError(_('You must provide an email address'))
@@ -35,44 +34,6 @@ class CustomAccountManager(BaseUserManager):
         user.set_password(password)
         user.save()
         return user
-class NewUser(AbstractUser, PermissionsMixin):
-    email = models.EmailField(_('email address'), unique=True)
-    username = models.CharField(max_length=150, unique=True)
-    phone_number = PhoneNumberField(default='1234567890')
-    is_Email_Verified = models.BooleanField(default=False)
-    is_Phone_Verified = models.BooleanField(default=False)
-    # otp = models.CharField(max_length=6, null=True, blank=True)
-    id = models.AutoField(primary_key=True)
-    
-    class Types(models.TextChoices):
-        DOCTOR = "DOCTOR", "Doctor"
-        PATIENT = "PATIENT", "Patient"
-        ADMIN = "ADMIN", "Admin"
-        INTERMEDIATE = "INTERMEDIATE", "Intermediate"
-    
-    type = models.CharField(_("Type"), max_length=50, choices=Types.choices, default=Types.ADMIN)
-
-    objects = CustomAccountManager()
-
-    # USERNAME_FIELD = 'username'
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    def get_absolute_url(self):
-        return reverse("users:detail", kwargs={"username": self.username})
-    
-class DoctorManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs) -> QuerySet:
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.DOCTOR)
-
-class PatientManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs) -> QuerySet:
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.PATIENT)
-
-class IntermediateManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs) -> QuerySet:
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.INTERMEDIATE)
-    
 class AppointmentManager(BaseUserManager):
     def upcoming_appointments(self):
         """
@@ -98,9 +59,47 @@ class AppointmentManager(BaseUserManager):
         """
         return self.filter(meeting_Type=Appointment.MeetingType.VIDEOCALL)
 
+class DoctorManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.DOCTOR)
+
+class PatientManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.PATIENT)
+
+class IntermediateManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.INTERMEDIATE)
+
+class NewUser(AbstractUser, PermissionsMixin):
+    email = models.EmailField(_('email address'), unique=True)
+    username = models.CharField(max_length=150, unique=True)
+    phone_number = PhoneNumberField(default='1234567890')
+    is_Email_Verified = models.BooleanField(default=False)
+    is_Phone_Verified = models.BooleanField(default=False)
+    # otp = models.CharField(max_length=6, null=True, blank=True)
+    id = models.AutoField(primary_key=True)
+    
+    class Types(models.TextChoices):
+        DOCTOR = "DOCTOR", "Doctor"
+        PATIENT = "PATIENT", "Patient"
+        ADMIN = "ADMIN", "Admin"
+        INTERMEDIATE = "INTERMEDIATE", "Intermediate"
+    
+    type = models.CharField(_("Type"), max_length=50, choices=Types.choices, default=Types.ADMIN)
+
+    objects = CustomAccountManager()
+
+    # USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def get_absolute_url(self):
+        return reverse("users:detail", kwargs={"username": self.username})
+
 class Patient(NewUser):
     class SeverityType(models.TextChoices):
-        MILD = "MILD", "Mild",
+        MILD = "MILD", "Mild"
         SEVERE = "SEVERE", "Severe"
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
@@ -116,9 +115,22 @@ class Patient(NewUser):
     class Meta:
         verbose_name = "Patient"
         verbose_name_plural = "Patients"
+
 class Doctor(NewUser):
+    class Specialization(models.TextChoices):
+        CARDIOLOGIST = "CARDIOLOGIST", "Cardiologist"
+        DERMATOLOGIST = "DERMATOLOGIST", "Dermatologist"
+        ORTHOPEDIC = "ORTHOPEDIC", "Orthopedic"
+        GYNECOLOGIST = "GYNECOLOGIST", "Gynecologist"
+        NEUROLOGIST = "NEUROLOGIST", "Neurologist"
+        OPHTHALMOLOGIST = "OPHTHALMOLOGIST", "Ophthalmologist"
+        ENT = "ENT", "Ent"
+        GASTROENTEROLOGIST = "GASTROENTEROLOGIST", "Gastroenterologist"
+        PSYCHIATRIST = "PSYCHIATRIST", "Psychiatrist"
+        ENDOCRINOLOGIST = "ENDOCRINOLOGIST", "Endocrinologist"   
+
     about = models.CharField(max_length=200)
-    speciality = models.CharField(max_length=100)
+    specialization = models.CharField(_("Speciality"), max_length=20, choices=Specialization.choices, default=Specialization.CARDIOLOGIST, blank=True, null=True)
     objects = DoctorManager()
 
     def save(self, *args, **kwargs):
@@ -148,9 +160,11 @@ class Appointment(models.Model):
         CHAT = "CHAT", "Chat"
         VIDEOCALL = "VIDEOCALL", "Videocall"
     
-    intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True, blank=True)
-    doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
+    # intermediate = models.ForeignKey(Intermediate, on_delete=models.SET_NULL, null=True, blank=True)
+    # doctor = models.ForeignKey(Doctor, on_delete=models.SET_NULL, null=True, blank=True)
+    # patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
+    patient_ID = models.IntegerField(default=0, null=True, blank=True)
+    doctor_Intermediate_ID = models.IntegerField(default=0, null=True, blank=True)
     time_difference = timedelta(hours=5, minutes=30)  # Adjust this according to your time difference
     server_time = timezone.now() - time_difference
     meeting_Date_Time = models.DateTimeField(verbose_name="Meeting Date and Time", default=server_time)

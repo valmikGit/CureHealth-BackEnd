@@ -2,7 +2,7 @@ from django.db import models
 from healthcare.models import NewUser
 
 class OTP(models.Model):
-    user = models.OneToOneField(NewUser, on_delete=models.CASCADE, related_name='user_OTP')
+    user = models.OneToOneField(NewUser, on_delete=models.CASCADE, related_name='user_ka_OTP')
     otp_secret = models.CharField(max_length=16)
     email = models.EmailField(unique=True)
     is_verified = models.BooleanField(default=False)
