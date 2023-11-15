@@ -89,7 +89,8 @@ def doctors(request):
             return Response(serializer.data)
         elif specialization is not None:
             doctors = Doctor.objects.filter(specialization=specialization)
-            serializer = DoctorSerializer(doctors, many=True)
+            doctors_Free = doctors.filter(is_Free=True)
+            serializer = DoctorSerializer(doctors_Free, many=True)
             return Response(serializer.data)
         else:
             doctors = Doctor.objects.all()
