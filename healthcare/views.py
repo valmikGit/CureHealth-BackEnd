@@ -23,6 +23,7 @@ def patients(request):
             return Response({
                 'blood_Group' : patients.blood_Group,
                 'gender' : patients.gender,
+                'disease' : patients.disease,
                 'patient_As_NewUser' : Response(serializer.data)
             })
         else: 
