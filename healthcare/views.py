@@ -12,13 +12,15 @@ from django.http import JsonResponse
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def patients(request):
     if request.method == 'GET':
-        severity = request.query_params.get('severity', None)
-        if severity is not None:
-            patients = Patient.objects.filter(severity=severity)
-            serializer = PatientSerializer(patients, many=True)
+        # severity = request.query_params.get('severity', None)
+        patient_Id = request.GET.get('id', None)
+        if patient_Id is not None:
+            patients = Patient.objects.filter(id=patient_Id)
+            # serializer = PatientSerializer(patients, many=True)
+            serializer = PatientSerializer(patients)
             return Response(serializer.data)
         else:
-            print("Severity is none.")   
+            print("id is none.") 
             patients = Patient.objects.all()
             serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data)
