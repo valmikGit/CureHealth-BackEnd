@@ -15,16 +15,16 @@ def patients(request):
         # severity = request.query_params.get('severity', None)
         patient_Id = request.GET.get('id', None)
         if patient_Id is not None:
-            patients = Patient.objects.filter(id=patient_Id)
+            patients = NewUser.objects.filter(id=patient_Id)
             # serializer = PatientSerializer(patients, many=True)
             # serializer = PatientSerializer(patients)
             serializer = PatientViewSerializer(patients)
             return Response(serializer.data)
         else:
-            print("id is none.") 
+            print("patient id is none.") 
             patients = Patient.objects.all()
             # serializer = PatientSerializer(patients, many=True)
-            serializer = PatientViewSerializer(patients, many=True)
+            serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data)
     
     elif request.method == 'POST':
