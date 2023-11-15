@@ -39,7 +39,8 @@ def patients(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'User added to database, GET to check whether database was updated.'
+                'message' : 'Patient added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
@@ -103,7 +104,8 @@ def doctors(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'An OTP was sent to your number and email was sent for verification'
+                'message' : 'Doctor added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
@@ -221,7 +223,8 @@ def intermediates(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'An OTP was sent to your number and email was sent for verification'
+                'message' : 'Intermediate added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
@@ -304,7 +307,8 @@ def appointments_View(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'Appointment added to database, GET to check whether database was updated.'
+                'message' : 'Appointment added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
