@@ -9,7 +9,6 @@ from django.contrib.auth.hashers import make_password
 from datetime import datetime
 from django.utils import timezone
 from datetime import timedelta
-
 class CustomAccountManager(BaseUserManager):
     def create_superuser(self, email, username, password, **other_fields):
         other_fields.setdefault('is_staff', True)

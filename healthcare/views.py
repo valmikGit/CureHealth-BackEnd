@@ -255,14 +255,36 @@ def intermediates(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def appointments_View(request):
     if request.method == 'GET':
-        appointment_Id = request.query_params.get('id', None)
-        if appointment_Id is not None:
-            appointments = Appointment.objects.filter(id=appointment_Id)
+        # appointment_Id = request.query_params.get('id', None)
+        # if appointment_Id is not None:
+        #     appointments = Appointment.objects.filter(id=appointment_Id)
+        #     serializer = AppointmentSerializer(appointments, many=True)
+        #     return Response(serializer.data)
+        # else:   
+        #     patients = Appointment.objects.all()
+        #     serializer = AppointmentSerializer(patients, many=True)
+        #     return Response(serializer.data)
+        appointment_Filter = request.query_params.get('filter', None)
+        if appointment_Filter is not None:
+            if appointment_Filter == "upcoming":
+                appointments = Appointment.objects.upcoming_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+            elif appointment_Filter == "past":
+                appointments = Appointment.objects.past_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+            elif appointment_Filter == "chat":
+                appointments = Appointment.objects.chat_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+            elif appointment_Filter == "videocall":
+                appointments = Appointment.objects.videocall_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+        else:
+            appointments = Appointment.objects.all()
             serializer = AppointmentSerializer(appointments, many=True)
-            return Response(serializer.data)
-        else:   
-            patients = Appointment.objects.all()
-            serializer = AppointmentSerializer(patients, many=True)
             return Response(serializer.data)
     
     elif request.method == 'POST':
