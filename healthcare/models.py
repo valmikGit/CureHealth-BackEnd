@@ -101,10 +101,14 @@ class Patient(NewUser):
     class SeverityType(models.TextChoices):
         MILD = "MILD", "Mild"
         SEVERE = "SEVERE", "Severe"
+    class Gender(models.TextChoices):
+        MALE = "MALE", "Male"
+        FEMALE = "FEMALE", "Female"
     blood_Group = models.CharField(_("Blood group"), max_length=4, default="Blood group not mentioned.")
     ailments = models.CharField(_("Ailments"), max_length=500, default="None")
     severity = models.CharField(_("Severity"), max_length=20, choices=SeverityType.choices, default=SeverityType.MILD, blank=True, null=True)
     disease = models.TextField(verbose_name="Information about disease", null=True, blank=True)
+    gender = models.CharField(_("Gender"), max_length=20, choices=Gender.choices, default=Gender.FEMALE, blank=True, null=True)
     objects = PatientManager()
 
     def save(self, *args, **kwargs):
