@@ -14,7 +14,7 @@ class DoctorSerializer(serializers.ModelSerializer):
             "user_permissions",
             "last_login",
             # "is_superuser",
-            "id"
+            # "id"
         ]
         depth = 1
 
@@ -31,7 +31,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "user_permissions",
             "last_login",
             # "is_superuser",
-            "id"
+            # "id"
         ]
         depth = 1
 
@@ -47,7 +47,7 @@ class NewUserSerializer(serializers.ModelSerializer):
             "user_permissions",
             "last_login",
             # "is_superuser",
-            "id"
+            # "id"
         ]
         depth = 1
 
@@ -64,7 +64,7 @@ class IntermediateSerializer(serializers.ModelSerializer):
             "user_permissions",
             "last_login",
             # "is_superuser",
-            "id"
+            # "id"
         ]
         depth = 1
 
