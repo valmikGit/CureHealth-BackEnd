@@ -16,15 +16,18 @@ def patients(request):
         patient_Id = request.GET.get('id', None)
         if patient_Id is not None:
             patients = NewUser.objects.filter(id=patient_Id)
+            particular_Patient = Patient.objects.filter(id=patient_Id).first()
             # serializer = PatientSerializer(patients, many=True)
             # serializer = PatientSerializer(patients)
             serializer = NewUserSerializer(patients, many=True)
+            print(particular_Patient.blood_Group)
+            print(particular_Patient)
             # return Response(serializer.data)
             return Response({
-                'blood_Group' : patients.blood_Group,
-                'gender' : patients.gender,
-                'disease' : patients.disease,
-                'patient_As_NewUser' : patients
+                'blood_Group' : particular_Patient.blood_Group,
+                'gender' : particular_Patient.gender,
+                'disease' : particular_Patient.disease,
+                'patient_As_NewUser' : serializer.data
             })
         else: 
             patients = Patient.objects.all()
@@ -90,14 +93,14 @@ def doctors(request):
         doctor_Id = request.GET.get('id', None)
         specialization = request.GET.get('specialization', None)
         if doctor_Id is not None:
-            doctors = NewUser.objects.filter(id=doctor_Id)
+            doctors = NewUser.objects.filter(id=doctor_Id).first()
             serializer = NewUserSerializer(doctors, many=True)
             # return Response(serializer.data)
             return Response({
                 'about' : doctors.about,
                 'specialization' : doctors.specialization,
                 'is_Free' : doctors.is_Free,
-                'doctor_As_NewUser' : doctors,
+                'doctor_As_NewUser' : serializer.data
             })
         elif specialization is not None:
             doctors = Doctor.objects.filter(specialization=specialization)
