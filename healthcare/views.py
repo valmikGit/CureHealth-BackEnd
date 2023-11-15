@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
-from .models import Doctor, Patient, NewUser, Intermediate
+from .models import Doctor, Patient, NewUser, Intermediate, Appointment
 from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -12,13 +12,15 @@ from django.http import JsonResponse
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def patients(request):
     if request.method == 'GET':
-        severity = request.query_params.get('severity', None)
-        if severity is not None:
-            patients = Patient.objects.filter(severity=severity)
-            serializer = PatientSerializer(patients, many=True)
+        # severity = request.query_params.get('severity', None)
+        patient_Id = request.GET.get('id', None)
+        if patient_Id is not None:
+            patients = Patient.objects.filter(id=patient_Id)
+            # serializer = PatientSerializer(patients, many=True)
+            serializer = PatientSerializer(patients)
             return Response(serializer.data)
         else:
-            print("Severity is none.")   
+            print("id is none.") 
             patients = Patient.objects.all()
             serializer = PatientSerializer(patients, many=True)
             return Response(serializer.data)
@@ -251,6 +253,89 @@ def intermediates(request):
             return Response({'message' : f"{name} deleted successfully."})
         except Exception as e:
             return Response({'message' : f"Error is {e}"})
+        
+@api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
+def appointments_View(request):
+    if request.method == 'GET':
+        # appointment_Id = request.query_params.get('id', None)
+        # if appointment_Id is not None:
+        #     appointments = Appointment.objects.filter(id=appointment_Id)
+        #     serializer = AppointmentSerializer(appointments, many=True)
+        #     return Response(serializer.data)
+        # else:   
+        #     patients = Appointment.objects.all()
+        #     serializer = AppointmentSerializer(patients, many=True)
+        #     return Response(serializer.data)
+        appointment_Filter = request.query_params.get('filter', None)
+        if appointment_Filter is not None:
+            if appointment_Filter == "upcoming":
+                appointments = Appointment.objects.upcoming_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+            elif appointment_Filter == "past":
+                appointments = Appointment.objects.past_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+            elif appointment_Filter == "chat":
+                appointments = Appointment.objects.chat_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+            elif appointment_Filter == "videocall":
+                appointments = Appointment.objects.videocall_appointments()
+                serializer = AppointmentSerializer(appointments, many=True)
+                return Response(serializer.data)
+        else:
+            appointments = Appointment.objects.all()
+            serializer = AppointmentSerializer(appointments, many=True)
+            return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        data = request.data
+        try:
+            serializer = AppointmentSerializer(data=data)
+            if not serializer.is_valid():
+                return Response({
+                    'status' : 403,
+                    'errors' : serializer.errors
+                })
+            serializer.save()
+            return Response({
+                'status' : 200,
+                'message' : 'Appointment added to database, GET to check whether database was updated.'
+            })
+        except Exception as e:
+            print(e)
+            return Response({
+                'status' : 200,
+                'error' : 'something went wrong'
+            })
+    
+    elif request.method == 'PUT':
+        data = request.data
+        serializer = AppointmentSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+    
+    elif request.method == 'PATCH':
+        data = request.data
+        obj = Appointment.objects.get(id=data['id'])
+        serializer = AppointmentSerializer(obj, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+    
+    elif request.method == 'DELETE':
+        data = request.data
+        try:
+            obj = Appointment.objects.get(id=data['id'])
+            name = obj.username
+            obj.delete()
+            return Response({'message' : f"{name} deleted successfully."})
+        except Exception as e:
+            return Response({'message' : f"Error is {e}"})
     
 @api_view(['GET'])
 def home(request):
@@ -259,7 +344,8 @@ def home(request):
         'patients/',
         'verify-otp/',
         'allusers/',
-        'intermediates/'
+        'intermediates/',
+        'appointments/'
     ]
     return Response(routes)
 
