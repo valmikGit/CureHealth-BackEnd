@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from .models import Doctor, Patient, NewUser, Intermediate, Appointment
-from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer, PatientViewSerializer
+from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.contrib.auth.hashers import make_password
@@ -20,8 +20,7 @@ def patients(request):
             # serializer = PatientSerializer(patients)
             serializer = NewUserSerializer(patients, many=True)
             return Response(serializer.data)
-        else:
-            print("patient id is none.") 
+        else: 
             patients = Patient.objects.all()
             # serializer = PatientSerializer(patients, many=True)
             serializer = PatientSerializer(patients, many=True)
@@ -40,7 +39,8 @@ def patients(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'User added to database, GET to check whether database was updated.'
+                'message' : 'Patient added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
@@ -80,10 +80,11 @@ def patients(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def doctors(request):
     if request.method == 'GET':
-        speciality = request.query_params.get('speciality', None)
-        if speciality is not None:
-            doctors = Doctor.objects.filter(speciality=speciality)
-            serializer = DoctorSerializer(doctors, many=True)
+        # speciality = request.query_params.get('speciality', None)
+        doctor_Id = request.GET.get('id', None)
+        if doctor_Id is not None:
+            doctors = NewUser.objects.filter(id=doctor_Id)
+            serializer = NewUserSerializer(doctors, many=True)
             return Response(serializer.data)
         else:
             doctors = Doctor.objects.all()
@@ -103,7 +104,8 @@ def doctors(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'An OTP was sent to your number and email was sent for verification'
+                'message' : 'Doctor added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
@@ -197,10 +199,11 @@ def new_Users(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def intermediates(request):
     if request.method == 'GET':
-        username = request.query_params.get('username', None)
-        if username is not None:
-            intermediate_People = Intermediate.objects.filter(username=username)
-            serializer = IntermediateSerializer(intermediate_People, many=True)
+        # username = request.query_params.get('username', None)
+        intermediate_Id = request.GET.get('id', None)
+        if intermediate_Id is not None:
+            intermediate_People = NewUser.objects.filter(id=intermediate_Id)
+            serializer = NewUserSerializer(intermediate_People, many=True)
             return Response(serializer.data)
         else:
             intermediate_People = Intermediate.objects.all()
@@ -220,7 +223,8 @@ def intermediates(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'An OTP was sent to your number and email was sent for verification'
+                'message' : 'Intermediate added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
@@ -303,7 +307,8 @@ def appointments_View(request):
             serializer.save()
             return Response({
                 'status' : 200,
-                'message' : 'Appointment added to database, GET to check whether database was updated.'
+                'message' : 'Appointment added to database, GET to check whether database was updated.',
+                'id' : serializer.data['id']
             })
         except Exception as e:
             print(e)
