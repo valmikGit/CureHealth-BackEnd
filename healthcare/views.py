@@ -19,7 +19,13 @@ def patients(request):
             # serializer = PatientSerializer(patients, many=True)
             # serializer = PatientSerializer(patients)
             serializer = NewUserSerializer(patients, many=True)
-            return Response(serializer.data)
+            # return Response(serializer.data)
+            return Response({
+                'blood_Group' : patients.blood_Group,
+                'gender' : patients.gender,
+                'disease' : patients.disease,
+                'patient_As_NewUser' : Response(serializer.data)
+            })
         else: 
             patients = Patient.objects.all()
             # serializer = PatientSerializer(patients, many=True)
