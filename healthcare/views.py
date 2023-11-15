@@ -20,8 +20,7 @@ def patients(request):
             # serializer = PatientSerializer(patients)
             serializer = NewUserSerializer(patients, many=True)
             return Response(serializer.data)
-        else:
-            print("patient id is none.") 
+        else: 
             patients = Patient.objects.all()
             # serializer = PatientSerializer(patients, many=True)
             serializer = PatientSerializer(patients, many=True)
@@ -80,10 +79,11 @@ def patients(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def doctors(request):
     if request.method == 'GET':
-        speciality = request.query_params.get('speciality', None)
-        if speciality is not None:
-            doctors = Doctor.objects.filter(speciality=speciality)
-            serializer = DoctorSerializer(doctors, many=True)
+        # speciality = request.query_params.get('speciality', None)
+        doctor_Id = request.GET.get('id', None)
+        if doctor_Id is not None:
+            doctors = NewUser.objects.filter(id=doctor_Id)
+            serializer = NewUserSerializer(doctors, many=True)
             return Response(serializer.data)
         else:
             doctors = Doctor.objects.all()
@@ -197,10 +197,11 @@ def new_Users(request):
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def intermediates(request):
     if request.method == 'GET':
-        username = request.query_params.get('username', None)
-        if username is not None:
-            intermediate_People = Intermediate.objects.filter(username=username)
-            serializer = IntermediateSerializer(intermediate_People, many=True)
+        # username = request.query_params.get('username', None)
+        intermediate_Id = request.GET.get('id', None)
+        if intermediate_Id is not None:
+            intermediate_People = NewUser.objects.filter(id=intermediate_Id)
+            serializer = NewUserSerializer(intermediate_People, many=True)
             return Response(serializer.data)
         else:
             intermediate_People = Intermediate.objects.all()
