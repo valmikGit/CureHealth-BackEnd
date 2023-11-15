@@ -23,7 +23,6 @@ class CustomAccountManager(BaseUserManager):
                 'Superuser must be assigned to is_superuser=True.')
 
         return self.create_user(email, username, password, **other_fields)
-
     def create_user(self, email, username, password, **other_fields):
         if not email:
             raise ValueError(_('You must provide an email address'))
@@ -35,44 +34,6 @@ class CustomAccountManager(BaseUserManager):
         user.set_password(password)
         user.save()
         return user
-class NewUser(AbstractUser, PermissionsMixin):
-    email = models.EmailField(_('email address'), unique=True)
-    username = models.CharField(max_length=150, unique=True)
-    phone_number = PhoneNumberField(default='1234567890')
-    is_Email_Verified = models.BooleanField(default=False)
-    is_Phone_Verified = models.BooleanField(default=False)
-    # otp = models.CharField(max_length=6, null=True, blank=True)
-    id = models.AutoField(primary_key=True)
-    
-    class Types(models.TextChoices):
-        DOCTOR = "DOCTOR", "Doctor"
-        PATIENT = "PATIENT", "Patient"
-        ADMIN = "ADMIN", "Admin"
-        INTERMEDIATE = "INTERMEDIATE", "Intermediate"
-    
-    type = models.CharField(_("Type"), max_length=50, choices=Types.choices, default=Types.ADMIN)
-
-    objects = CustomAccountManager()
-
-    # USERNAME_FIELD = 'username'
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    def get_absolute_url(self):
-        return reverse("users:detail", kwargs={"username": self.username})
-    
-class DoctorManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs) -> QuerySet:
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.DOCTOR)
-
-class PatientManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs) -> QuerySet:
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.PATIENT)
-
-class IntermediateManager(BaseUserManager):
-    def get_queryset(self, *args, **kwargs) -> QuerySet:
-        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.INTERMEDIATE)
-    
 class AppointmentManager(BaseUserManager):
     def upcoming_appointments(self):
         """
@@ -98,6 +59,44 @@ class AppointmentManager(BaseUserManager):
         """
         return self.filter(meeting_Type=Appointment.MeetingType.VIDEOCALL)
 
+class DoctorManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.DOCTOR)
+
+class PatientManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.PATIENT)
+
+class IntermediateManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs) -> QuerySet:
+        return super().get_queryset(*args, **kwargs).filter(type=NewUser.Types.INTERMEDIATE)
+
+class NewUser(AbstractUser, PermissionsMixin):
+    email = models.EmailField(_('email address'), unique=True)
+    username = models.CharField(max_length=150, unique=True)
+    phone_number = PhoneNumberField(default='1234567890')
+    is_Email_Verified = models.BooleanField(default=False)
+    is_Phone_Verified = models.BooleanField(default=False)
+    # otp = models.CharField(max_length=6, null=True, blank=True)
+    id = models.AutoField(primary_key=True)
+    
+    class Types(models.TextChoices):
+        DOCTOR = "DOCTOR", "Doctor"
+        PATIENT = "PATIENT", "Patient"
+        ADMIN = "ADMIN", "Admin"
+        INTERMEDIATE = "INTERMEDIATE", "Intermediate"
+    
+    type = models.CharField(_("Type"), max_length=50, choices=Types.choices, default=Types.ADMIN)
+
+    objects = CustomAccountManager()
+
+    # USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def get_absolute_url(self):
+        return reverse("users:detail", kwargs={"username": self.username})
+
 class Patient(NewUser):
     class SeverityType(models.TextChoices):
         MILD = "MILD", "Mild"
@@ -116,6 +115,7 @@ class Patient(NewUser):
     class Meta:
         verbose_name = "Patient"
         verbose_name_plural = "Patients"
+
 class Doctor(NewUser):
     class Specialization(models.TextChoices):
         CARDIOLOGIST = "CARDIOLOGIST", "Cardiologist"
