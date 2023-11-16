@@ -133,7 +133,7 @@ class Doctor(NewUser):
         PSYCHIATRIST = "PSYCHIATRIST", "Psychiatrist"
         ENDOCRINOLOGIST = "ENDOCRINOLOGIST", "Endocrinologist"   
 
-    about = models.CharField(max_length=200)
+    about = models.TextField(max_length=200)
     specialization = models.CharField(_("Speciality"), max_length=20, choices=Specialization.choices, default=Specialization.CARDIOLOGIST, blank=True, null=True)
     is_Free = models.BooleanField(_("Is the doctor free for a meeting"), default=True)
     objects = DoctorManager()
