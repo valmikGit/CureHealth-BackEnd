@@ -20,8 +20,6 @@ def patients(request):
             # serializer = PatientSerializer(patients, many=True)
             # serializer = PatientSerializer(patients)
             serializer = NewUserSerializer(patients, many=True)
-            print(particular_Patient.blood_Group)
-            print(particular_Patient)
             # return Response(serializer.data)
             return Response({
                 'blood_Group' : particular_Patient.blood_Group,
