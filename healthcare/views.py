@@ -231,6 +231,7 @@ def intermediates(request):
             return Response(serializer.data)
     
     elif request.method == 'POST':
+        data = request.data
         try:
             serializer = IntermediateSerializer(data=data)
             if not serializer.is_valid():
