@@ -111,6 +111,7 @@ def doctors(request):
             return Response(serializer.data)
     
     elif request.method == 'POST':
+        data = request.data
         try:
             serializer = DoctorSerializer(data=data)
             if not serializer.is_valid():
