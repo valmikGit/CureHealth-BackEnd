@@ -135,7 +135,7 @@ class Doctor(NewUser):
 
     about = models.TextField(max_length=200)
     specialization = models.CharField(_("Speciality"), max_length=20, choices=Specialization.choices)
-    is_Free = models.BooleanField(_("Is the doctor free for a meeting"), default=True)
+    is_Free = models.BooleanField(_("Is the doctor free for a meeting?"))
     objects = DoctorManager()
 
     def save(self, *args, **kwargs):
@@ -143,6 +143,8 @@ class Doctor(NewUser):
             self.type = NewUser.Types.DOCTOR
             if not self.specialization:
                 self.specialization = Doctor.Specialization.CARDIOLOGIST
+            if not self.is_Free:
+                self.is_Free = True
         return super().save(*args, **kwargs)
     
     class Meta:

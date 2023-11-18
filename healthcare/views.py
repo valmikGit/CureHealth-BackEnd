@@ -101,8 +101,7 @@ def doctors(request):
                 'doctor_As_NewUser' : serializer.data
             })
         elif specialization is not None:
-            doctors = Doctor.objects.filter(specialization=specialization)
-            doctors_Free = doctors.filter(is_Free=True)
+            doctors_Free = Doctor.objects.filter(specialization=specialization, is_Free=True)
             serializer = DoctorSerializer(doctors_Free, many=True)
             return Response(serializer.data)
         else:
