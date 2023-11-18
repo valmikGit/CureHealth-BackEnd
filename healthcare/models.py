@@ -141,6 +141,8 @@ class Doctor(NewUser):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.type = NewUser.Types.DOCTOR
+            if not self.specialization:
+                self.specialization = Doctor.Specialization.CARDIOLOGIST
         return super().save(*args, **kwargs)
     
     class Meta:
