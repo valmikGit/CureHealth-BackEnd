@@ -20,6 +20,10 @@ def patients(request):
                 return Response({
                     'message' : 'Patient with this ID does not exist'
                 })
+            if(patients.type != NewUser.Types.PATIENT):
+                return Response({
+                    'message' : 'User exists but is not of type Patient.'
+                })
             particular_Patient = Patient.objects.filter(id=patient_Id).first()
             # serializer = PatientSerializer(patients, many=True)
             # serializer = PatientSerializer(patients)
@@ -99,6 +103,10 @@ def doctors(request):
             if(not doctors.exists()):
                 return Response({
                     'message' : 'Doctor with this ID does not exist.'
+                })
+            if(doctors.type != NewUser.Types.DOCTOR):
+                return Response({
+                    'message' : 'User exists but is not of Doctor type.'
                 })
             particular_Doctor = Doctor.objects.filter(id=doctor_Id).first()
             serializer = NewUserSerializer(doctors, many=True)
