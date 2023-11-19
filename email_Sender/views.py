@@ -20,7 +20,8 @@ def send_Email(request):
             recipient_list = [settings.EMAIL_HOST_USER]
             send_mail(subject=subject, message=message, from_email=from_email, recipient_list=recipient_list)
             return Response({
-                'message' : 'Feedback email sent to admin successfully'
+                'recipient' : recipient_list[0],
+                'sender' : from_email
             })
         if subject_Type == 2:
             email = request.data.get('email')
@@ -31,7 +32,8 @@ def send_Email(request):
             recipient_list = [email]
             send_mail(subject=subject, message=message, from_email=from_email, recipient_list=recipient_list)
             return Response({
-                'message' : 'Reminder email sent to patient successfully'
+                'recipient' : recipient_list[0],
+                'sender' : from_email
             })
 
 @api_view(['GET'])
