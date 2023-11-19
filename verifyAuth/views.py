@@ -13,6 +13,7 @@ from Synergy_Backend import settings
 def send_otp(request):
     if request.method == 'POST':
         email = request.POST.get('email')
+        print(f"Email POSTed is : {email}")
         user = NewUser.objects.filter(email=email).first()
         
         if user:
