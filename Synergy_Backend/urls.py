@@ -24,4 +24,5 @@ urlpatterns = [
     path('chat-2/', include('chatApp_2.urls')),
     path('agora/', include('agora.urls')),
     path('verify-auth/', include('verifyAuth.urls')),
+    path('email-sender/', include('email_Sender.urls'))
 ]
