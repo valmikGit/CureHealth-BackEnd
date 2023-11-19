@@ -16,9 +16,9 @@ def send_Email(request):
             print(f"Email POSTed on feedback page is {email}")
             subject = request.data.get('subject')
             message = request.data.get('message')
-            from_email = settings.EMAIL_HOST_USER
-            recipient_list = [email]
-            send_mail(subject, message, from_email, recipient_list)
+            from_email = email
+            recipient_list = [settings.EMAIL_HOST_USER]
+            send_mail(subject=subject, message=message, from_email=from_email, recipient_list=recipient_list)
             return Response({
                 'message' : 'Feedback email sent to admin successfully'
             })
