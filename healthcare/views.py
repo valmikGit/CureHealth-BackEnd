@@ -20,7 +20,7 @@ def patients(request):
                 return Response({
                     'message' : 'Patient with this ID does not exist'
                 })
-            if(patients.type != NewUser.Types.PATIENT):
+            if(patients.first().type != NewUser.Types.PATIENT):
                 return Response({
                     'message' : 'User exists but is not of type Patient.'
                 })
