@@ -18,7 +18,7 @@ def patients(request):
             patients = NewUser.objects.filter(id=patient_Id)
             if(not patients.exists()):
                 return Response({
-                    'message' : 'Patient with this ID does not exist'
+                    'message' : 'User with this ID does not exist'
                 })
             if(patients.first().type != NewUser.Types.PATIENT):
                 return Response({
@@ -102,7 +102,7 @@ def doctors(request):
             doctors = NewUser.objects.filter(id=doctor_Id)
             if(not doctors.exists()):
                 return Response({
-                    'message' : 'Doctor with this ID does not exist.'
+                    'message' : 'User with this ID does not exist.'
                 })
             if(doctors.type != NewUser.Types.DOCTOR):
                 return Response({
@@ -246,7 +246,11 @@ def intermediates(request):
             intermediate_People = NewUser.objects.filter(id=intermediate_Id)
             if(not intermediate_People.exists()):
                 return Response({
-                    'message' : 'Intermediate person with this ID does not exist.'
+                    'message' : 'User with this ID does not exist.'
+                })
+            if(intermediate_People.first().type != NewUser.Types.INTERMEDIATE):
+                return Response({
+                    'message' : 'User exists but is not of Intermediate type.'
                 })
             serializer = NewUserSerializer(intermediate_People, many=True)
             return Response(serializer.data)
