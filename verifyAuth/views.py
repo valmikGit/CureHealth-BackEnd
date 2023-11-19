@@ -13,7 +13,7 @@ from Synergy_Backend import settings
 def send_otp(request):
     if request.method == 'POST':
         email = request.data.get('email')
-        print(f"Email POSTed is : {email}")
+        print(f"Email POSTed on send otp page is : {email}")
         user = NewUser.objects.filter(email=email).first()
         
         if user:
@@ -39,7 +39,10 @@ def send_otp(request):
             print("Email sent successfully.")
 
             # return redirect('verify-otp')
-            return redirect('http://127.0.0.1:8000/verify-auth/verify-otp/')
+            # return redirect('http://127.0.0.1:8000/verify-auth/verify-otp/')
+            return Response({
+                'message' : 'User should be redirected to the verify-otp page by the front end.'
+            })
         else:
             # return render(request, 'send_otp.html', {'message': 'Email not found'})
             return Response({
@@ -55,7 +58,8 @@ def send_otp(request):
 @api_view(['POST'])
 def verify_otp(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
+        email = request.data.get('email')
+        print(f"Email POSTed on verify otp page is : {email}")
         otp_code = request.POST.get('otp')
         
         otp_obj = OTP.objects.filter(email=email).first()
@@ -68,17 +72,18 @@ def verify_otp(request):
             if otp.verify(otp_code):
                 otp_obj.is_verified = True
                 otp_obj.save()
-                user = authenticate(request, username=otp_obj.user.username, password='')
+                # user = authenticate(request, username=otp_obj.user.username, password='')
+                user = authenticate(request, username=otp_obj.user.email, password='')
                 if user:
                     login(request, user)
                     # return redirect('home') Replace 'home' with the URL name of your home page
                     return Response({
-                        'message' : 'You are being redirected to the home page.'
+                        'message' : 'You are being redirected to the home page. This should be done by the frontend.'
                     })
                 else:
                     # return redirect('login') Replace 'login' with the URL name of your home page
                     return Response({
-                        'message' : 'You are being redirected to the login page.'
+                        'message' : 'You are being redirected to the login page. This should be done by the frontend.'
                     })
             else:
                 # return render(request, 'verify_otp.html', {'message': 'Invalid OTP'})

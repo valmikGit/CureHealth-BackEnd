@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "verifyAuth",
     "agora",
     "chatApp",
+    "email_Sender"
 ]
 
 REST_fRAMEWORK = {
