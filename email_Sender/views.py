@@ -17,7 +17,8 @@ def send_Email(request):
             subject = request.data.get('subject')
             message = request.data.get('message')
             from_email = email
-            recipient_list = [settings.EMAIL_HOST_USER]
+            send_To = settings.EMAIL_HOST_USER
+            recipient_list = [send_To]
             send_mail(subject=subject, message=message, from_email=from_email, recipient_list=recipient_list)
             return Response({
                 'recipient' : recipient_list[0],
