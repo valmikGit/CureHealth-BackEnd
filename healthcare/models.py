@@ -131,7 +131,7 @@ class Doctor(NewUser):
         ENT = "ENT", "Ent"
         GASTROENTEROLOGIST = "GASTROENTEROLOGIST", "Gastroenterologist"
         PSYCHIATRIST = "PSYCHIATRIST", "Psychiatrist"
-        ENDOCRINOLOGIST = "ENDOCRINOLOGIST", "Endocrinologist"   
+        ENDOCRINOLOGIST = "ENDOCRINOLOGIST", "Endocrinologist"
 
     about = models.TextField(max_length=200)
     specialization = models.CharField(_("Speciality"), max_length=20, choices=Specialization.choices)
