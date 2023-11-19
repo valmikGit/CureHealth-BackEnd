@@ -91,18 +91,19 @@ def doctors(request):
         doctor_Id = request.GET.get('id', None)
         specialization = request.GET.get('specialization', None)
         if doctor_Id is not None:
-            doctors = NewUser.objects.filter(id=doctor_Id).first()
+            doctors = NewUser.objects.filter(id=doctor_Id)
+            particular_Doctor = Doctor.objects.filter(id=doctor_Id).first()
             serializer = NewUserSerializer(doctors, many=True)
             # return Response(serializer.data)
             return Response({
-                'about' : doctors.about,
-                'specialization' : doctors.specialization,
-                'is_Free' : doctors.is_Free,
+                'about' : particular_Doctor.about,
+                'specialization' : particular_Doctor.specialization,
+                'is_Free' : particular_Doctor.is_Free,
                 'doctor_As_NewUser' : serializer.data
             })
         elif specialization is not None:
-            doctors_Free = Doctor.objects.filter(specialization=specialization, is_Free=True)
-            print(str(doctors_Free.query))
+            doctors = Doctor.objects.filter(specialization=specialization)
+            doctors_Free = doctors.filter(is_Free=True)
             serializer = DoctorSerializer(doctors_Free, many=True)
             return Response(serializer.data)
         else:
