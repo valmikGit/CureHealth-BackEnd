@@ -12,7 +12,8 @@ from Synergy_Backend import settings
 @api_view(['POST'])
 def send_otp(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
+        email = request.data.get('email')
+        print(f"Email POSTed is : {email}")
         user = NewUser.objects.filter(email=email).first()
         
         if user:
@@ -35,8 +36,10 @@ def send_otp(request):
             # Add Phone OTP API
 
             send_mail(subject, message, from_email, recipient_list)
+            print("Email sent successfully.")
 
-            return redirect('verify_otp')
+            # return redirect('verify-otp')
+            return redirect('http://127.0.0.1:8000/verify-auth/verify-otp/')
         else:
             # return render(request, 'send_otp.html', {'message': 'Email not found'})
             return Response({

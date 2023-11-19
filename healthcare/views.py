@@ -16,12 +16,18 @@ def patients(request):
         patient_Id = request.GET.get('id', None)
         if patient_Id is not None:
             patients = NewUser.objects.filter(id=patient_Id)
+            if(not patients.exists()):
+                return Response({
+                    'message' : 'User with this ID does not exist'
+                })
+            if(patients.first().type != NewUser.Types.PATIENT):
+                return Response({
+                    'message' : 'User exists but is not of type Patient.'
+                })
             particular_Patient = Patient.objects.filter(id=patient_Id).first()
             # serializer = PatientSerializer(patients, many=True)
             # serializer = PatientSerializer(patients)
             serializer = NewUserSerializer(patients, many=True)
-            print(particular_Patient.blood_Group)
-            print(particular_Patient)
             # return Response(serializer.data)
             return Response({
                 'blood_Group' : particular_Patient.blood_Group,
@@ -93,13 +99,22 @@ def doctors(request):
         doctor_Id = request.GET.get('id', None)
         specialization = request.GET.get('specialization', None)
         if doctor_Id is not None:
-            doctors = NewUser.objects.filter(id=doctor_Id).first()
+            doctors = NewUser.objects.filter(id=doctor_Id)
+            if(not doctors.exists()):
+                return Response({
+                    'message' : 'User with this ID does not exist.'
+                })
+            if(doctors.type != NewUser.Types.DOCTOR):
+                return Response({
+                    'message' : 'User exists but is not of Doctor type.'
+                })
+            particular_Doctor = Doctor.objects.filter(id=doctor_Id).first()
             serializer = NewUserSerializer(doctors, many=True)
             # return Response(serializer.data)
             return Response({
-                'about' : doctors.about,
-                'specialization' : doctors.specialization,
-                'is_Free' : doctors.is_Free,
+                'about' : particular_Doctor.about,
+                'specialization' : particular_Doctor.specialization,
+                'is_Free' : particular_Doctor.is_Free,
                 'doctor_As_NewUser' : serializer.data
             })
         elif specialization is not None:
@@ -113,6 +128,7 @@ def doctors(request):
             return Response(serializer.data)
     
     elif request.method == 'POST':
+        data = request.data
         try:
             serializer = DoctorSerializer(data=data)
             if not serializer.is_valid():
@@ -168,6 +184,10 @@ def new_Users(request):
     if user_id is not None:
         try:
             new_User = NewUser.objects.filter(id=user_id)
+            if(not new_User.exists()):
+                return Response({
+                    'message' : 'User with this ID does not exist.'
+                })
             serializer = NewUserSerializer(new_User)
             return Response(serializer.data)
         except Exception as e:
@@ -224,6 +244,14 @@ def intermediates(request):
         intermediate_Id = request.GET.get('id', None)
         if intermediate_Id is not None:
             intermediate_People = NewUser.objects.filter(id=intermediate_Id)
+            if(not intermediate_People.exists()):
+                return Response({
+                    'message' : 'User with this ID does not exist.'
+                })
+            if(intermediate_People.first().type != NewUser.Types.INTERMEDIATE):
+                return Response({
+                    'message' : 'User exists but is not of Intermediate type.'
+                })
             serializer = NewUserSerializer(intermediate_People, many=True)
             return Response(serializer.data)
         else:
@@ -232,6 +260,7 @@ def intermediates(request):
             return Response(serializer.data)
     
     elif request.method == 'POST':
+        data = request.data
         try:
             serializer = IntermediateSerializer(data=data)
             if not serializer.is_valid():
