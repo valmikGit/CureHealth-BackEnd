@@ -50,7 +50,7 @@ def send_Email(request):
             recipient_list = [email]
             send_mail(subject=subject, message=message, from_email=from_email, recipient_list=recipient_list)
             return Response({
-                'alert' : 'An email has been sent to the doctor. The doctor will join soon.'
+                'alert' : 'An email has been sent to the doctor. The doctor will join soon. Please click on the submit button to get an email to get the video call room details.'
             })
 
 @api_view(['GET'])
