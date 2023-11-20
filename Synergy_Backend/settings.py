@@ -220,7 +220,7 @@ CACHES = {
 
 ADMINS = [
     ("Krish Dave", "krishdave011@gmail.com"),
-    ("Vaibhav Mittal", "mittalvaibhav277@gamil.com"),
+    ("Vaibhav Mittal", "mittalvaibhav277@gmail.com"),
     ("Valmik Belgaonkar", "valmik0000000@gmail.com"),
     ("Chirag", "mvchirag4@gmail.com")
 ]
