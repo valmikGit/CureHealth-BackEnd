@@ -29,9 +29,9 @@ def send_Email(request):
 
         if subject_Type == 2: # ROOM ID AND ROOM LINK SEND TO PATIENT
             email = request.data.get('email')
-            landing_Page = request.data.get('VC_Link')
+            video_Call_Link = request.data.get('video_Call_Link')
             room_ID = request.data.get('room_ID')
-            message = f"Please click on this link to join the video call : {landing_Page}\nEnter the given Room ID : {room_ID}"
+            message = f"Please click on this link to join the video call : {video_Call_Link}\nEnter the given Room ID : {room_ID}"
             subject = "Appointment with doctor"
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [email]
@@ -42,7 +42,7 @@ def send_Email(request):
         
         if subject_Type == 3: # ROOM ID AND ROOM LINK SEND TO DOCTOR
             email = request.data.get('email')
-            video_Call_Link = request.data.get('VC_Link')
+            video_Call_Link = request.data.get('video_Call_Link')
             room_ID = request.data.get('room_ID')
             message = f"Please click on the link to join the video call : {video_Call_Link}\nEnter the given ROOM ID : {room_ID}"
             subject = "Appointment with patient"
