@@ -44,7 +44,7 @@ def send_Email(request):
             email = request.data.get('email')
             video_Call_Link = request.data.get('video_Call_Link')
             room_ID = request.data.get('room_ID')
-            message = f"Please click on the link to join the video call : {video_Call_Link}\nEnter the given ROOM ID : {room_ID}"
+            message = f"A patient wants to have a meet. Please click on the link to join the video call : {video_Call_Link}\nEnter the given ROOM ID : {room_ID}"
             subject = "Appointment with patient"
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [email]
