@@ -24,6 +24,9 @@ def send_Email(request):
             #     'sender' : from_email
             # })
             mail_admins(subject=subject, message=message, fail_silently=False)
+            return Response({
+                'message' : 'Email sent to all the admins. Check your inboxes'
+            })
 
         if subject_Type == 2:
             email = request.data.get('email')
