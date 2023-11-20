@@ -25,10 +25,7 @@ def patients(request):
                     'message' : 'User exists but is not of type Patient.'
                 })
             particular_Patient = Patient.objects.filter(id=patient_Id).first()
-            # serializer = PatientSerializer(patients, many=True)
-            # serializer = PatientSerializer(patients)
             serializer = NewUserSerializer(patients, many=True)
-            # return Response(serializer.data)
             return Response({
                 'blood_Group' : particular_Patient.blood_Group,
                 'gender' : particular_Patient.gender,
@@ -120,10 +117,10 @@ def doctors(request):
         elif specialization is not None:
             doctors = Doctor.objects.filter(specialization=specialization)
             doctors_Free = doctors.filter(is_Free=True)
-            if(not doctors_Free.exists()):
-                return Response({
-                    'message': f"{specialization}s are not free right now."
-                })
+            # if(not doctors_Free.exists()):
+            #     return Response({
+            #         'message': f"{specialization}s are not free right now."
+            #     })
             serializer = DoctorSerializer(doctors_Free, many=True)
             return Response(serializer.data)
         else:
