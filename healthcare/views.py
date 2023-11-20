@@ -101,7 +101,7 @@ def doctors(request):
                 return Response({
                     'message' : 'User with this ID does not exist.'
                 })
-            if(doctors.type != NewUser.Types.DOCTOR):
+            if(doctors.first().type != NewUser.Types.DOCTOR):
                 return Response({
                     'message' : 'User exists but is not of Doctor type.'
                 })
@@ -117,10 +117,10 @@ def doctors(request):
         elif specialization is not None:
             doctors = Doctor.objects.filter(specialization=specialization)
             doctors_Free = doctors.filter(is_Free=True)
-            # if(not doctors_Free.exists()):
-            #     return Response({
-            #         'message': f"{specialization}s are not free right now."
-            #     })
+            if(not doctors_Free.exists()):
+                return Response({
+                    'message': f"{specialization}s are not free right now."
+                })
             serializer = DoctorSerializer(doctors_Free, many=True)
             return Response(serializer.data)
         else:
