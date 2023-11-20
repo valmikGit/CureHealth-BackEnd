@@ -195,6 +195,7 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'synergybackend1@gmail.com'
 EMAIL_HOST_PASSWORD = 'sxfbxyfelkphqlbx'
+SERVER_EMAIL = 'synergybackend1@gmail.com'
 
 CHANNEL_LAYERS = {
     'default': {
@@ -217,3 +218,9 @@ CACHES = {
     }
 }
 
+ADMINS = [
+    ("Krish Dave", "krishdave011@gmail.com"),
+    ("Vaibhav Mittal", "mittalvaibhav277@gmail.com"),
+    ("Valmik Belgaonkar", "valmik0000000@gmail.com"),
+    ("Chirag", "mvchirag4@gmail.com")
+]
