@@ -122,7 +122,7 @@ def doctors(request):
             doctors_Free = doctors.filter(is_Free=True)
             if(not doctors_Free.exists()):
                 return Response({
-                    'message': f"Doctors of {specialization} are not free right now."
+                    'message': f"{specialization}s are not free right now."
                 })
             serializer = DoctorSerializer(doctors_Free, many=True)
             return Response(serializer.data)
