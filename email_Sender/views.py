@@ -12,10 +12,10 @@ def send_Email(request):
     if request.method == "POST":
         subject_Type = request.data.get('subject_Type')
         if subject_Type == 1:
-            # email = request.data.get('email')
+            email = request.data.get('email')
             # print(f"Email POSTed on feedback page is {email}")
             subject = request.data.get('subject')
-            message = request.data.get('message')
+            message = f"This feedback was sent from {email}\n" + request.data.get('message')
             # from_email = email
             # recipient_list = [settings.EMAIL_HOST_USER]
             # send_mail(subject=subject, message=message, from_email=from_email, recipient_list=recipient_list)
@@ -30,7 +30,6 @@ def send_Email(request):
 
         if subject_Type == 2:
             email = request.data.get('email')
-            print(f"Email POSTed on reminder page is {email}")
             subject = request.data.get('subject')
             message = request.data.get('message')
             from_email = settings.EMAIL_HOST_USER
