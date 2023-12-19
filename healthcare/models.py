@@ -201,6 +201,41 @@ class Appointment(models.Model):
         verbose_name = "Appointment"
         verbose_name_plural = "Appointments"
 
-
-
+# 1. Manager Classes:
+# CustomAccountManager:
+# Inherits from BaseUserManager, which is a Django base manager for handling user models.
+# Provides methods for creating a superuser (create_superuser) and a regular user (create_user).
+# The create_superuser method sets default values for is_staff, is_superuser, and is_active.
+# The create_user method is responsible for creating a regular user, setting default values, normalizing the email, and saving the user with a hashed password.
+# AppointmentManager:
+# Inherits from BaseUserManager.
+# Provides custom query methods for filtering appointments based on upcoming, past, chat, and videocall appointments.
+# DoctorManager, PatientManager, IntermediateManager:
+# Inherit from BaseUserManager.
+# Provide custom queryset methods for filtering users based on their type attribute, which corresponds to the NewUser.Types choices.
+# 2. Model Classes:
+# NewUser (AbstractUser and PermissionsMixin):
+# Inherits from AbstractUser and PermissionsMixin, which are Django base classes for user authentication and permissions.
+# Adds custom fields such as email, phone_number, is_Email_Verified, is_Phone_Verified, id, and type.
+# Defines a Types enumeration for user types (DOCTOR, PATIENT, ADMIN, INTERMEDIATE).
+# Uses the CustomAccountManager as the default manager.
+# Patient, Doctor, Intermediate (Inherit from NewUser):
+# Inherit from NewUser and extend it with additional fields specific to each type of user.
+# Each user type has its own manager (PatientManager, DoctorManager, IntermediateManager).
+# Custom fields include blood_Group, ailments, severity, disease, gender for Patient; about, specialization, is_Free for Doctor; and about for Intermediate.
+# Overrides the save method to set the type field based on the user type when saving.
+# Appointment:
+# Represents an appointment model.
+# Contains fields like patient_ID, doctor_Intermediate_ID, meeting_Date_Time, meeting_Type, disease, and video_URL.
+# Uses the AppointmentManager as the default manager.
+# Defines a MeetingType enumeration for appointment types (CHAT, VIDEOCALL).
+# Overrides the save method to add custom logic (commented out) before saving the instance.
+# 3. Relationships:
+# Patient, Doctor, and Intermediate models are subclasses of NewUser, which is an abstract user model.
+# The Appointment model has fields referencing Patient, Doctor, and Intermediate models through ID fields (patient_ID and doctor_Intermediate_ID).
+# 4. Other Points:
+# The MeetingType and Types choices are defined as enumerations using models.TextChoices.
+# The PhoneNumberField from phonenumber_field is used for the phone_number field in the NewUser model.
+# Custom logic is added in the save methods of models for additional functionalities.
+# In summary, this code defines a flexible user model hierarchy with different types of users (Patient, Doctor, Intermediate), each with its own set of attributes. The Appointment model handles appointments between users, and the manager classes provide custom queries and filtering for these models. The code follows best practices for Django models and managers, allowing for extensibility and customization.
     
