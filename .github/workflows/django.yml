@@ -2,13 +2,12 @@ name: Django CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -28,3 +27,13 @@ jobs:
     # - name: Run Tests
     #   run: |
     #     python manage.py test
+    - name: Build image and push to docker hub
+      uses: mr-smithers-excellent/docker-build-push@v6
+      with:
+        image: valmikdocker/synergy_backend
+        tags: backend
+        registry: docker.io
+        directory: .
+        dockerfile: ./Dockerfile
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
