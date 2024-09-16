@@ -111,7 +111,7 @@ Ensure you have the following environment variables set:
 
 ## Installation
 
-1. **Clone the Repository:**
+1. **Clone the Repository:** 
    ```bash
    git clone https://github.com/valmikGit/CureHealth-BackEnd
    ```
