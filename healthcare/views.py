@@ -159,6 +159,27 @@ def doctors(request):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+
+    # elif request.method == 'PUT':
+    #     data = request.data
+
+    #     # Fetch the instance to update using the ID provided in the data
+    #     try:
+    #         doctor_instance = Doctor.objects.get(id=data['id'])
+    #     except Doctor.DoesNotExist:
+    #         return Response(
+    #             {"error": "Doctor with this ID does not exist"}
+    #         )
+
+    #     # Pass the instance to the serializer
+    #     serializer = DoctorSerializer(instance=doctor_instance, data=data)
+
+    #     # Validate and save the updated data
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+
+    #     return Response(serializer.errors)
     
     elif request.method == 'PATCH':
         data = request.data
