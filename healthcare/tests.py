@@ -5,6 +5,8 @@ from rest_framework import status
 from django.utils.timezone import now, timedelta
 from django.urls import reverse
 from django.contrib.auth.hashers import make_password
+import json
+
 class PatientsAPITestCase(APITestCase):
     def setUp(self):
         self.patient = Patient(
@@ -110,18 +112,38 @@ class DoctorsAPITestCase(APITestCase):
         self.assertIsNotNone(new_doctor)
         self.assertEqual(new_doctor.specialization, "ORTHOPEDIC")
 
+    # def test_put_doctor(self):
+    #     data = {
+    #         "id": self.doctor.id,
+    #         "about": "Updated description",
+    #         "specialization": "Neurologist",
+    #         "is_Free": False
+    #     }
+    #     response = self.client.put(f'{self.url}', data, content_type='application/json')
+    #     # self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     updated_doctor = Doctor.objects.get(id=self.doctor.id)
+    #     self.assertEqual(updated_doctor.about, "Updated description")
+    #     self.assertEqual(updated_doctor.specialization, "Neurologist")
+    #     self.assertEqual(updated_doctor.is_Free, False)
+
     def test_put_doctor(self):
         data = {
             "id": self.doctor.id,
+            "password": self.doctor.password,
+            "email": self.doctor.email,
+            "username": self.doctor.username,
             "about": "Updated description",
-            "specialization": "Neurologist",
+            "specialization": Doctor.Specialization.NEUROLOGIST,  # Use internal enum value
             "is_Free": False
         }
-        response = self.client.put(f'{self.url}', data, content_type='application/json')
+        # Serialize the data manually to ensure it's in proper JSON format
+        json_data = json.dumps(data)
+        # response = self.client.put(f'{self.url}', data, content_type='application/json')
+        response = self.client.put(f'{self.url}', json_data, content_type='application/json')
         # self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_doctor = Doctor.objects.get(id=self.doctor.id)
         self.assertEqual(updated_doctor.about, "Updated description")
-        self.assertEqual(updated_doctor.specialization, "Neurologist")
+        self.assertEqual(updated_doctor.specialization, Doctor.Specialization.NEUROLOGIST)  # Match enum
         self.assertEqual(updated_doctor.is_Free, False)
 
     def test_patch_doctor(self):

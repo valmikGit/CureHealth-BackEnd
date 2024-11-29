@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Doctor, Patient, NewUser, Appointment, Intermediate, CustomAccountManager
 
 class DoctorSerializer(serializers.ModelSerializer):
+    specialization = serializers.ChoiceField(choices=Doctor.Specialization.choices)  # Ensure proper validation
     class Meta:
         model = Doctor
         exclude = [

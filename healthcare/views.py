@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.decorators import api_view
 from .models import Doctor, Patient, NewUser, Intermediate, Appointment
 from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
@@ -152,34 +153,39 @@ def doctors(request):
                 'error' : 'something went wrong'
             })
     
-    elif request.method == 'PUT':
-        data = request.data
-        serializer = DoctorSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-
     # elif request.method == 'PUT':
     #     data = request.data
-
-    #     # Fetch the instance to update using the ID provided in the data
-    #     try:
-    #         doctor_instance = Doctor.objects.get(id=data['id'])
-    #     except Doctor.DoesNotExist:
-    #         return Response(
-    #             {"error": "Doctor with this ID does not exist"}
-    #         )
-
-    #     # Pass the instance to the serializer
-    #     serializer = DoctorSerializer(instance=doctor_instance, data=data)
-
-    #     # Validate and save the updated data
+    #     serializer = DoctorSerializer(data=data)
     #     if serializer.is_valid():
     #         serializer.save()
     #         return Response(serializer.data)
-
     #     return Response(serializer.errors)
+
+    elif request.method == 'PUT':
+        data = request.data  # Parse incoming data
+        
+        # Ensure the ID is provided
+        if 'id' not in data:
+            return Response({"error": "ID is required for update"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            doctor = Doctor.objects.get(id=data['id'])  # Retrieve doctor by ID
+        except Doctor.DoesNotExist:
+            return Response({"error": "Doctor not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Map specialization input if necessary
+        if 'specialization' in data:
+            try:
+                data['specialization'] = Doctor.Specialization[data['specialization'].upper()]
+            except KeyError:
+                return Response({"error": "Invalid specialization"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = DoctorSerializer(doctor, data=data, partial=False)  # Update the object
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
     elif request.method == 'PATCH':
         data = request.data
