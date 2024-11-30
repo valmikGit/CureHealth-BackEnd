@@ -211,17 +211,18 @@ def new_Users(request):
     user_id = request.query_params.get('id', None)
     if user_id is not None:
         try:
-            new_User = NewUser.objects.filter(id=user_id)
-            if(not new_User.exists()):
-                return Response({
-                    'message' : 'User with this ID does not exist.'
-                })
-            serializer = NewUserSerializer(new_User)
+            # Use .get() to fetch a single user
+            new_User = NewUser.objects.get(id=user_id)
+            serializer = NewUserSerializer(new_User)  # No `many=True` needed for a single object
             return Response(serializer.data)
+        except NewUser.DoesNotExist:
+            return Response({
+                'message': 'User with this ID does not exist.'
+            }, status=404)
         except Exception as e:
             return Response({
-                'status' : 404,
-                'message' : f"Error : {e}"
+                'status': 404,
+                'message': f"Error: {e}"
             })
     else:
         if request.method == 'GET':
@@ -240,11 +241,21 @@ def new_Users(request):
     
         elif request.method == 'PUT':
             data = request.data
-            serializer = NewUserSerializer(data=data)
+            try:
+                # Retrieve the object to be updated
+                obj = NewUser.objects.get(id=data['id'])
+            except NewUser.DoesNotExist:
+                return Response({'message': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Pass the object as instance to update it
+            serializer = NewUserSerializer(obj, data=data)
             if serializer.is_valid():
+                if 'password' in serializer.validated_data:
+                    # Hash the password if it's being updated
+                    serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
         elif request.method == 'PATCH':
             data = request.data

@@ -112,20 +112,6 @@ class DoctorsAPITestCase(APITestCase):
         self.assertIsNotNone(new_doctor)
         self.assertEqual(new_doctor.specialization, "ORTHOPEDIC")
 
-    # def test_put_doctor(self):
-    #     data = {
-    #         "id": self.doctor.id,
-    #         "about": "Updated description",
-    #         "specialization": "Neurologist",
-    #         "is_Free": False
-    #     }
-    #     response = self.client.put(f'{self.url}', data, content_type='application/json')
-    #     # self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     updated_doctor = Doctor.objects.get(id=self.doctor.id)
-    #     self.assertEqual(updated_doctor.about, "Updated description")
-    #     self.assertEqual(updated_doctor.specialization, "Neurologist")
-    #     self.assertEqual(updated_doctor.is_Free, False)
-
     def test_put_doctor(self):
         data = {
             "id": self.doctor.id,
@@ -178,90 +164,96 @@ class DoctorsAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['message'], "CARDIOLOGISTs are not free right now.")
 
-# class NewUsersAPITestCase(APITestCase):
-#     def setUp(self):
-#         # Create test users
-#         self.user = NewUser.objects.create(
-#             username="testuser",
-#             email="testuser@example.com",
-#             type=NewUser.Types.USER,
-#             password=make_password("password123")
-#         )
+class NewUsersAPITestCase(APITestCase):
+    def setUp(self):
+        # Create test users
+        self.user = NewUser.objects.create(
+            username="testuser",
+            email="testuser@example.com",
+            password=make_password("password123")
+        )
         
-#         self.another_user = NewUser.objects.create(
-#             username="anotheruser",
-#             email="anotheruser@example.com",
-#             type=NewUser.Types.USER,
-#             password=make_password("password456")
-#         )
+        self.another_user = NewUser.objects.create(
+            username="anotheruser",
+            email="anotheruser@example.com",
+            password=make_password("password456")
+        )
         
-#         # Initialize client
-#         self.client = APIClient()
+        # Initialize client
+        self.client = APIClient()
+        self.url = reverse('users')
 
-#     def test_get_user_by_id(self):
-#         response = self.client.get(f'/new_users/', {'id': self.user.id})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data['username'], "testuser")
-#         self.assertEqual(response.data['email'], "testuser@example.com")
+    def test_get_user_by_id(self):
+        response = self.client.get(f'{self.url}', {'id': self.user.id})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['username'], "testuser")
+        self.assertEqual(response.data['email'], "testuser@example.com")
 
-#     def test_get_nonexistent_user_by_id(self):
-#         response = self.client.get(f'/new_users/', {'id': 999})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data['message'], 'User with this ID does not exist.')
+    def test_get_nonexistent_user_by_id(self):
+        response = self.client.get(f'{self.url}', {'id': 999})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], 'User with this ID does not exist.')
 
-#     def test_get_all_users(self):
-#         response = self.client.get('/new_users/')
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(len(response.data), 2)  # Two users exist
-#         usernames = [user['username'] for user in response.data]
-#         self.assertIn("testuser", usernames)
-#         self.assertIn("anotheruser", usernames)
+    def test_get_all_users(self):
+        response = self.client.get(f'{self.url}')
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # self.assertEqual(len(response.data), 2)  # Two users exist
+        usernames = [user['username'] for user in response.data]
+        self.assertIn("testuser", usernames)
+        self.assertIn("anotheruser", usernames)
 
-#     def test_post_new_user(self):
-#         data = {
-#             "username": "newuser",
-#             "email": "newuser@example.com",
-#             "type": NewUser.Types.USER,
-#             "password": "securepassword"
-#         }
-#         response = self.client.post('/new_users/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         created_user = NewUser.objects.filter(username="newuser").first()
-#         self.assertIsNotNone(created_user)
-#         self.assertEqual(created_user.email, "newuser@example.com")
+    def test_post_new_user(self):
+        data = {
+            "username": "newuser",
+            "email": "newuser@example.com",
+            "password": "securepassword"
+        }
+        response = self.client.post(f'{self.url}', data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        created_user = NewUser.objects.filter(username="newuser").first()
+        self.assertIsNotNone(created_user)
+        self.assertEqual(created_user.email, "newuser@example.com")
 
-#     def test_put_update_user(self):
-#         data = {
-#             "id": self.user.id,
-#             "username": "updateduser",
-#             "email": "updateduser@example.com",
-#             "type": NewUser.Types.USER
-#         }
-#         response = self.client.put('/new_users/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         updated_user = NewUser.objects.get(id=self.user.id)
-#         self.assertEqual(updated_user.username, "updateduser")
-#         self.assertEqual(updated_user.email, "updateduser@example.com")
+    def test_put_update_user(self):
+        data = {
+            "id": self.user.id,
+            "username": "updateduser",
+            "email": "updateduser@example.com",
+            "password": "new_password123"  # Raw password
+        }
+        json_data = json.dumps(data)  # Serialize the dictionary to a JSON string
+        response = self.client.put(
+            f'{self.url}', 
+            data=json_data, 
+            content_type='application/json'  # Ensure content type is application/json
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-#     def test_patch_update_user(self):
-#         data = {
-#             "id": self.user.id,
-#             "email": "patchedemail@example.com"
-#         }
-#         response = self.client.patch('/new_users/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         updated_user = NewUser.objects.get(id=self.user.id)
-#         self.assertEqual(updated_user.email, "patchedemail@example.com")
+        # Fetch the updated user
+        updated_user = NewUser.objects.get(id=self.user.id)
+        self.assertEqual(updated_user.username, "updateduser")
+        self.assertEqual(updated_user.email, "updateduser@example.com")
+        self.assertTrue(updated_user.check_password("new_password123"))  # Check if the password is hashed correctly
 
-#     def test_delete_user(self):
-#         response = self.client.delete('/new_users/', {'id': self.another_user.id})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertFalse(NewUser.objects.filter(id=self.another_user.id).exists())
+    def test_patch_update_user(self):
+        data = {
+            "id": self.user.id,
+            "email": "patchedemail@example.com"
+        }
+        response = self.client.patch(f'{self.url}', data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_user = NewUser.objects.get(id=self.user.id)
+        self.assertEqual(updated_user.email, "patchedemail@example.com")
 
-#     def test_delete_nonexistent_user(self):
-#         response = self.client.delete('/new_users/', {'id': 999})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertIn("Error is", response.data['message'])
+    def test_delete_user(self):
+        response = self.client.delete(f'{self.url}', {'id': self.another_user.id})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(NewUser.objects.filter(id=self.another_user.id).exists())
+
+    def test_delete_nonexistent_user(self):
+        response = self.client.delete(f'{self.url}', {'id': 999})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("Error is", response.data['message'])
 
 # class IntermediatesAPITestCase(APITestCase):
 #     def setUp(self):
