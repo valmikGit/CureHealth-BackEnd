@@ -339,15 +339,29 @@ def intermediates(request):
             return Response(serializer.data)
         return Response(serializer.errors)
     
+    # elif request.method == 'DELETE':
+    #     data = request.data
+    #     try:
+    #         obj = Intermediate.objects.get(id=data['id'])
+    #         name = obj.username
+    #         obj.delete()
+    #         return Response({'message' : f"{name} deleted successfully."})
+    #     except Intermediate.DoesNotExist as e:
+    #         return Response({'message' : f"Error is {e}"})
+
     elif request.method == 'DELETE':
         data = request.data
+        intermediate_id = data.get('id')  # Safely get the ID
+        if not intermediate_id:
+            return Response({'message': 'ID is required for deletion.'}, status=400)
+
         try:
-            obj = Intermediate.objects.get(id=data['id'])
+            obj = Intermediate.objects.get(id=intermediate_id)
             name = obj.username
             obj.delete()
-            return Response({'message' : f"{name} deleted successfully."})
-        except Exception as e:
-            return Response({'message' : f"Error is {e}"})
+            return Response({'message': f"{name} deleted successfully."})
+        except Intermediate.DoesNotExist:
+            return Response({'message': f"User with ID {intermediate_id} does not exist."}, status=404)
         
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def appointments_View(request):

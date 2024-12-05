@@ -255,198 +255,206 @@ class NewUsersAPITestCase(APITestCase):
         # self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("Error is", response.data['message'])
 
-# class IntermediatesAPITestCase(APITestCase):
-#     def setUp(self):
-#         # Create test users of type 'INTERMEDIATE' and others for testing
-#         self.intermediate_user = NewUser.objects.create(
-#             username="intermediateuser",
-#             email="intermediateuser@example.com",
-#             type=NewUser.Types.INTERMEDIATE,
-#             password=make_password("password123")
-#         )
+class IntermediateAPITestCase(APITestCase):
+    def setUp(self):
+        """
+        Set up initial data for testing.
+        """
+        # Create a sample Intermediate user
+        self.intermediate_user = Intermediate.objects.create(
+            username="intermediate_user",
+            email="intermediate@example.com",
+            password=make_password("password123"),
+            about="I am an intermediate user.",
+        )
+        self.valid_data = {
+            "username": "new_intermediate",
+            "email": "new_intermediate@example.com",
+            "password": "securepassword",
+            "about": "New intermediate user"
+        }
+        self.invalid_data = {
+            "username": "",
+            "email": "invalid_email",
+            "password": "123",
+        }
 
-#         self.intermediate = Intermediate.objects.create(
-#             id=self.intermediate_user.id,
-#             specialization="Teaching",
-#             user=self.intermediate_user
-#         )
+        self.client = APIClient()
+        self.url = reverse('intermediates')
 
-#         self.other_user = NewUser.objects.create(
-#             username="regularuser",
-#             email="regularuser@example.com",
-#             type=NewUser.Types.USER,
-#             password=make_password("password456")
-#         )
+    def test_get_all_intermediates(self):
+        """
+        Test GET method to retrieve all intermediate users.
+        """
+        response = self.client.get(f"{self.url}")
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(len(response.data) > 0)
 
-#         self.client = APIClient()
+    def test_get_single_intermediate_valid_id(self):
+        """
+        Test GET method with a valid intermediate ID.
+        """
+        response = self.client.get(f"{self.url}?id={self.intermediate_user.id}")
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]['id'], self.intermediate_user.id)
 
-#     def test_get_intermediate_by_id(self):
-#         response = self.client.get(f'/intermediates/', {'id': self.intermediate_user.id})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data[0]['username'], "intermediateuser")
-#         self.assertEqual(response.data[0]['email'], "intermediateuser@example.com")
+    def test_get_single_intermediate_invalid_id(self):
+        """
+        Test GET method with an invalid intermediate ID.
+        """
+        response = self.client.get(f"{self.url}?id=999")
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], "User with this ID does not exist.")
 
-#     def test_get_nonexistent_intermediate_by_id(self):
-#         response = self.client.get(f'/intermediates/', {'id': 999})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data['message'], 'User with this ID does not exist.')
+    def test_post_valid_intermediate(self):
+        """
+        Test POST method with valid data.
+        """
+        response = self.client.post(f"{self.url}", data=self.valid_data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("message", response.data)
+        self.assertEqual(response.data["message"], "Intermediate added to database, GET to check whether database was updated.")
 
-#     def test_get_non_intermediate_user_by_id(self):
-#         response = self.client.get(f'/intermediates/', {'id': self.other_user.id})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(response.data['message'], 'User exists but is not of Intermediate type.')
+    def test_post_invalid_intermediate(self):
+        """
+        Test POST method with invalid data.
+        """
+        response = self.client.post(f"{self.url}", data=self.invalid_data)
+        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIn("errors", response.data)
 
-#     def test_get_all_intermediates(self):
-#         response = self.client.get('/intermediates/')
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(len(response.data), 1)  # Only one intermediate user exists
-#         self.assertEqual(response.data[0]['specialization'], "Teaching")
+    def test_patch_intermediate(self):
+        """
+        Test PATCH method to update an intermediate user partially.
+        """
+        update_data = {"id": self.intermediate_user.id, "about": "Updated about information"}
+        response = self.client.patch(f"{self.url}", data=update_data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.intermediate_user.refresh_from_db()
+        self.assertEqual(self.intermediate_user.about, "Updated about information")
 
-#     def test_post_intermediate(self):
-#         data = {
-#             "username": "newintermediate",
-#             "email": "newintermediate@example.com",
-#             "type": NewUser.Types.INTERMEDIATE,
-#             "password": "securepassword",
-#             "specialization": "Counseling"
-#         }
-#         response = self.client.post('/intermediates/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         created_user = NewUser.objects.filter(username="newintermediate").first()
-#         self.assertIsNotNone(created_user)
-#         self.assertEqual(created_user.type, NewUser.Types.INTERMEDIATE)
+    def test_delete_intermediate(self):
+        """
+        Test DELETE method to delete an intermediate user.
+        """
+        delete_data = {"id": self.intermediate_user.id}
+        response = self.client.delete(f"{self.url}", data=delete_data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(Intermediate.objects.filter(id=self.intermediate_user.id).exists())
+        self.assertIn("deleted successfully", response.data['message'])
 
-#     def test_put_intermediate(self):
-#         data = {
-#             "id": self.intermediate.id,
-#             "specialization": "Mentorship"
-#         }
-#         response = self.client.put('/intermediates/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         updated_intermediate = Intermediate.objects.get(id=self.intermediate.id)
-#         self.assertEqual(updated_intermediate.specialization, "Mentorship")
+    def test_delete_invalid_intermediate(self):
+        """
+        Test DELETE method with an invalid ID.
+        """
+        response = self.client.delete(f"{self.url}", data={"id": 999}, format="json")
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("User with ID", response.data['message'])
 
-#     def test_patch_intermediate(self):
-#         data = {
-#             "id": self.intermediate.id,
-#             "specialization": "Leadership"
-#         }
-#         response = self.client.patch('/intermediates/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         updated_intermediate = Intermediate.objects.get(id=self.intermediate.id)
-#         self.assertEqual(updated_intermediate.specialization, "Leadership")
+class AppointmentsAPITestCase(APITestCase):
+    def setUp(self):
+        # Create a doctor and intermediate users for testing
+        # self.doctor_user = NewUser.objects.create(
+        #     username="doctoruser",
+        #     email="doctor@example.com",
+        #     type=NewUser.Types.DOCTOR,
+        #     password=make_password("password123")
+        # )
+        self.doctor = Doctor.objects.create(
+            username="doctoruser",
+            email="doctor@example.com",
+            type=NewUser.Types.DOCTOR,
+            password=make_password("password123"),
+            specialization="General",
+            is_Free=True
+        )
 
-#     def test_delete_intermediate(self):
-#         response = self.client.delete('/intermediates/', {'id': self.intermediate.id})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertFalse(Intermediate.objects.filter(id=self.intermediate.id).exists())
+        # Create an appointment
+        self.appointment = Appointment.objects.create(
+            patient_name="John Doe",
+            appointment_date=now() + timedelta(days=1),
+            doctor_Intermediate_ID=self.doctor.id,
+            type="videocall"
+        )
 
-#     def test_delete_nonexistent_intermediate(self):
-#         response = self.client.delete('/intermediates/', {'id': 999})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertIn("Error is", response.data['message'])
+        self.client = APIClient()
+        self.url = reverse('appointments')
 
-# class AppointmentsAPITestCase(APITestCase):
-#     def setUp(self):
-#         # Create a doctor and intermediate users for testing
-#         self.doctor_user = NewUser.objects.create(
-#             username="doctoruser",
-#             email="doctor@example.com",
-#             type=NewUser.Types.DOCTOR,
-#             password=make_password("password123")
-#         )
-#         self.doctor = Doctor.objects.create(
-#             id=self.doctor_user.id,
-#             specialization="General",
-#             is_Free=True,
-#             user=self.doctor_user
-#         )
+    def test_get_all_appointments(self):
+        response = self.client.get(f'{self.url}')
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)  # One appointment exists
+        self.assertEqual(response.data[0]['patient_name'], "John Doe")
 
-#         # Create an appointment
-#         self.appointment = Appointment.objects.create(
-#             patient_name="John Doe",
-#             appointment_date=now() + timedelta(days=1),
-#             doctor_Intermediate_ID=self.doctor.id,
-#             type="videocall"
-#         )
+    def test_get_upcoming_appointments(self):
+        response = self.client.get(f'{self.url}', {'filter': 'upcoming'})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)  # One upcoming appointment
+        self.assertEqual(response.data[0]['patient_name'], "John Doe")
 
-#         self.client = APIClient()
+    def test_get_past_appointments(self):
+        # Modify the appointment to be in the past
+        self.appointment.appointment_date = now() - timedelta(days=1)
+        self.appointment.save()
+        response = self.client.get(f'{self.url}', {'filter': 'past'})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)  # One past appointment
+        self.assertEqual(response.data[0]['patient_name'], "John Doe")
 
-#     def test_get_all_appointments(self):
-#         response = self.client.get('/appointments/')
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(len(response.data), 1)  # One appointment exists
-#         self.assertEqual(response.data[0]['patient_name'], "John Doe")
+    def test_get_chat_appointments(self):
+        # Change the type of appointment to "chat"
+        self.appointment.type = "chat"
+        self.appointment.save()
+        response = self.client.get(f'{self.url}', {'filter': 'chat'})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)  # One chat appointment
+        self.assertEqual(response.data[0]['type'], "chat")
 
-#     def test_get_upcoming_appointments(self):
-#         response = self.client.get('/appointments/', {'filter': 'upcoming'})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(len(response.data), 1)  # One upcoming appointment
-#         self.assertEqual(response.data[0]['patient_name'], "John Doe")
+    def test_get_videocall_appointments(self):
+        response = self.client.get(f'{self.url}', {'filter': 'videocall'})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)  # One videocall appointment
+        self.assertEqual(response.data[0]['type'], "videocall")
 
-#     def test_get_past_appointments(self):
-#         # Modify the appointment to be in the past
-#         self.appointment.appointment_date = now() - timedelta(days=1)
-#         self.appointment.save()
-#         response = self.client.get('/appointments/', {'filter': 'past'})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(len(response.data), 1)  # One past appointment
-#         self.assertEqual(response.data[0]['patient_name'], "John Doe")
+    def test_post_appointment(self):
+        data = {
+            "patient_name": "Jane Doe",
+            "appointment_date": str(now() + timedelta(days=2)),
+            "doctor_Intermediate_ID": self.doctor.id,
+            "type": "chat"
+        }
+        response = self.client.post(f'{self.url}', data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(Appointment.objects.filter(patient_name="Jane Doe").exists())
 
-#     def test_get_chat_appointments(self):
-#         # Change the type of appointment to "chat"
-#         self.appointment.type = "chat"
-#         self.appointment.save()
-#         response = self.client.get('/appointments/', {'filter': 'chat'})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(len(response.data), 1)  # One chat appointment
-#         self.assertEqual(response.data[0]['type'], "chat")
+    def test_put_appointment(self):
+        data = {
+            "id": self.appointment.id,
+            "patient_name": "Updated Name",
+            "type": "chat"
+        }
+        response = self.client.put(f'{self.url}', data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_appointment = Appointment.objects.get(id=self.appointment.id)
+        self.assertEqual(updated_appointment.patient_name, "Updated Name")
+        self.assertEqual(updated_appointment.type, "chat")
 
-#     def test_get_videocall_appointments(self):
-#         response = self.client.get('/appointments/', {'filter': 'videocall'})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertEqual(len(response.data), 1)  # One videocall appointment
-#         self.assertEqual(response.data[0]['type'], "videocall")
+    def test_patch_appointment(self):
+        data = {
+            "id": self.appointment.id,
+            "type": "chat"
+        }
+        response = self.client.patch(f'{self.url}', data)
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_appointment = Appointment.objects.get(id=self.appointment.id)
+        self.assertEqual(updated_appointment.type, "chat")
 
-#     def test_post_appointment(self):
-#         data = {
-#             "patient_name": "Jane Doe",
-#             "appointment_date": str(now() + timedelta(days=2)),
-#             "doctor_Intermediate_ID": self.doctor.id,
-#             "type": "chat"
-#         }
-#         response = self.client.post('/appointments/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertTrue(Appointment.objects.filter(patient_name="Jane Doe").exists())
+    def test_delete_appointment(self):
+        response = self.client.delete('{self.url}', {'id': self.appointment.id})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(Appointment.objects.filter(id=self.appointment.id).exists())
 
-#     def test_put_appointment(self):
-#         data = {
-#             "id": self.appointment.id,
-#             "patient_name": "Updated Name",
-#             "type": "chat"
-#         }
-#         response = self.client.put('/appointments/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         updated_appointment = Appointment.objects.get(id=self.appointment.id)
-#         self.assertEqual(updated_appointment.patient_name, "Updated Name")
-#         self.assertEqual(updated_appointment.type, "chat")
-
-#     def test_patch_appointment(self):
-#         data = {
-#             "id": self.appointment.id,
-#             "type": "chat"
-#         }
-#         response = self.client.patch('/appointments/', data)
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         updated_appointment = Appointment.objects.get(id=self.appointment.id)
-#         self.assertEqual(updated_appointment.type, "chat")
-
-#     def test_delete_appointment(self):
-#         response = self.client.delete('/appointments/', {'id': self.appointment.id})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertFalse(Appointment.objects.filter(id=self.appointment.id).exists())
-
-#     def test_delete_nonexistent_appointment(self):
-#         response = self.client.delete('/appointments/', {'id': 999})
-#         self.assertEqual(response.status_code, status.HTTP_200_OK)
-#         self.assertIn("Error is", response.data['message'])
+    def test_delete_nonexistent_appointment(self):
+        response = self.client.delete(f'{self.url}', {'id': 999})
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("Error is", response.data['message'])
