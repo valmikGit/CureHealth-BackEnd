@@ -444,11 +444,12 @@ def appointments_View(request):
         data = request.data
         try:
             obj = Appointment.objects.get(id=data['id'])
-            name = obj.username
-            obj.delete()
-            return Response({'message' : f"{name} deleted successfully."})
+            obj.delete()  # Remove the invalid `username` reference
+            return Response({'message': f"Appointment with ID {data['id']} deleted successfully."})
+        except Appointment.DoesNotExist:
+            return Response({'message': f"Appointment with ID {data['id']} does not exist."}, status=404)
         except Exception as e:
-            return Response({'message' : f"Error is {e}"})
+            return Response({'message': f"Error: {e}"}, status=500)
     
 @api_view(['GET'])
 def home(request):

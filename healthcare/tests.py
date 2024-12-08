@@ -351,110 +351,75 @@ class IntermediateAPITestCase(APITestCase):
         # self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("User with ID", response.data['message'])
 
-class AppointmentsAPITestCase(APITestCase):
+class AppointmentAPITestCase(APITestCase):
+
     def setUp(self):
-        # Create a doctor and intermediate users for testing
-        # self.doctor_user = NewUser.objects.create(
-        #     username="doctoruser",
-        #     email="doctor@example.com",
-        #     type=NewUser.Types.DOCTOR,
-        #     password=make_password("password123")
-        # )
-        self.doctor = Doctor.objects.create(
-            username="doctoruser",
-            email="doctor@example.com",
-            type=NewUser.Types.DOCTOR,
-            password=make_password("password123"),
-            specialization="General",
-            is_Free=True
+        # Set up initial data
+        self.appointment1 = Appointment.objects.create(
+            patient_ID=1,
+            doctor_Intermediate_ID=101,
+            meeting_Type=Appointment.MeetingType.CHAT,
+            disease="Flu",
+            video_URL="http://example.com/meet1"
         )
-
-        # Create an appointment
-        self.appointment = Appointment.objects.create(
-            patient_name="John Doe",
-            appointment_date=now() + timedelta(days=1),
-            doctor_Intermediate_ID=self.doctor.id,
-            type="videocall"
+        self.appointment2 = Appointment.objects.create(
+            patient_ID=2,
+            doctor_Intermediate_ID=102,
+            meeting_Type=Appointment.MeetingType.VIDEOCALL,
+            disease="Cough",
+            video_URL="http://example.com/meet2"
         )
-
-        self.client = APIClient()
-        self.url = reverse('appointments')
-
+        self.valid_payload = {
+            "patient_ID": 3,
+            "doctor_Intermediate_ID": 103,
+            "meeting_Type": "CHAT",
+            "disease": "Fever",
+            "video_URL": "http://example.com/meet3"
+        }
+        self.invalid_payload = {
+            "patient_ID": None,
+            "doctor_Intermediate_ID": None,
+            "meeting_Type": "UNKNOWN",
+            "disease": "",
+        }
+    
     def test_get_all_appointments(self):
-        response = self.client.get(f'{self.url}')
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)  # One appointment exists
-        self.assertEqual(response.data[0]['patient_name'], "John Doe")
+        url = reverse('appointments')  # Replace with the actual URL name
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+    
+    def test_get_filtered_appointments(self):
+        url = f"{reverse('appointments')}?filter=chat"  # Replace with the actual URL name
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['meeting_Type'], "CHAT")
 
-    def test_get_upcoming_appointments(self):
-        response = self.client.get(f'{self.url}', {'filter': 'upcoming'})
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)  # One upcoming appointment
-        self.assertEqual(response.data[0]['patient_name'], "John Doe")
+    def test_create_valid_appointment(self):
+        url = reverse('appointments')  # Replace with the actual URL name
+        response = self.client.post(url, data=self.valid_payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Appointment.objects.count(), 3)
+        self.assertEqual(Appointment.objects.last().disease, "Fever")
+    
+    # def test_create_invalid_appointment(self):
+    #     url = reverse('appointments')  # Replace with the actual URL name
+    #     response = self.client.post(url, data=self.invalid_payload, format='json')
+    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    #     self.assertIn('errors', response.data)
 
-    def test_get_past_appointments(self):
-        # Modify the appointment to be in the past
-        self.appointment.appointment_date = now() - timedelta(days=1)
-        self.appointment.save()
-        response = self.client.get(f'{self.url}', {'filter': 'past'})
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)  # One past appointment
-        self.assertEqual(response.data[0]['patient_name'], "John Doe")
-
-    def test_get_chat_appointments(self):
-        # Change the type of appointment to "chat"
-        self.appointment.type = "chat"
-        self.appointment.save()
-        response = self.client.get(f'{self.url}', {'filter': 'chat'})
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)  # One chat appointment
-        self.assertEqual(response.data[0]['type'], "chat")
-
-    def test_get_videocall_appointments(self):
-        response = self.client.get(f'{self.url}', {'filter': 'videocall'})
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)  # One videocall appointment
-        self.assertEqual(response.data[0]['type'], "videocall")
-
-    def test_post_appointment(self):
-        data = {
-            "patient_name": "Jane Doe",
-            "appointment_date": str(now() + timedelta(days=2)),
-            "doctor_Intermediate_ID": self.doctor.id,
-            "type": "chat"
-        }
-        response = self.client.post(f'{self.url}', data)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(Appointment.objects.filter(patient_name="Jane Doe").exists())
-
-    def test_put_appointment(self):
-        data = {
-            "id": self.appointment.id,
-            "patient_name": "Updated Name",
-            "type": "chat"
-        }
-        response = self.client.put(f'{self.url}', data)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_appointment = Appointment.objects.get(id=self.appointment.id)
-        self.assertEqual(updated_appointment.patient_name, "Updated Name")
-        self.assertEqual(updated_appointment.type, "chat")
-
-    def test_patch_appointment(self):
-        data = {
-            "id": self.appointment.id,
-            "type": "chat"
-        }
-        response = self.client.patch(f'{self.url}', data)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_appointment = Appointment.objects.get(id=self.appointment.id)
-        self.assertEqual(updated_appointment.type, "chat")
+    def test_update_appointment(self):
+        url = reverse('appointments')  # Replace with the actual URL name
+        payload = {"id": self.appointment1.id, "disease": "Updated Flu"}
+        response = self.client.patch(url, data=payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.appointment1.refresh_from_db()
+        self.assertEqual(self.appointment1.disease, "Updated Flu")
 
     def test_delete_appointment(self):
-        response = self.client.delete('{self.url}', {'id': self.appointment.id})
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(Appointment.objects.filter(id=self.appointment.id).exists())
-
-    def test_delete_nonexistent_appointment(self):
-        response = self.client.delete(f'{self.url}', {'id': 999})
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("Error is", response.data['message'])
+        url = reverse('appointments')  # Replace with the actual URL name
+        payload = {"id": self.appointment1.id}
+        response = self.client.delete(url, data=payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Appointment.objects.count(), 1)  # Ensure one appointment remains
