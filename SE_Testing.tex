@@ -1,0 +1,160 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+
+\title{Detailed Report on API Testing Code}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Framework and Tools Used}
+
+\subsection*{APITestCase}
+\begin{itemize}
+    \item A subclass of \texttt{unittest.TestCase}, provided by Django REST Framework (DRF) to test API endpoints.
+    \item Sets up a test client (\texttt{APIClient}) to simulate HTTP requests and responses.
+    \item Ensures each test runs in isolation with an independent database.
+\end{itemize}
+
+\subsection*{APIClient}
+\begin{itemize}
+    \item A client that sends requests to API endpoints and retrieves responses.
+    \item Supports HTTP methods like GET, POST, PUT, PATCH, and DELETE.
+\end{itemize}
+
+\subsection*{Database Setup}
+\begin{itemize}
+    \item The database is reset after each test case execution.
+    \item Sample data is created in the \texttt{setUp()} method for testing purposes.
+\end{itemize}
+
+\section*{2. Explanation of Test Cases}
+
+\subsection*{a. \texttt{PatientsAPITestCase}}
+This test case validates the functionality of patient-related endpoints.
+
+\textbf{Setup:}
+\begin{itemize}
+    \item A \texttt{Patient} object is created with attributes such as \texttt{email}, \texttt{username}, \texttt{blood group}, and \texttt{disease}.
+    \item The \texttt{set\_password()} method ensures the password is hashed before saving.
+\end{itemize}
+
+\textbf{Tests:}
+\begin{itemize}
+    \item \texttt{test\_get\_all\_patients}: Simulates a GET request to retrieve all patients and validates the response.
+    \item \texttt{test\_get\_patient\_by\_id}: Fetches a specific patient by their ID and checks attributes.
+    \item \texttt{test\_get\_patient\_not\_found}: Simulates a GET request with a non-existent ID and expects an error message.
+    \item \texttt{test\_get\_patient\_wrong\_type}: Tests querying a \texttt{Doctor} object instead of \texttt{Patient}, expecting an error.
+\end{itemize}
+
+\subsection*{b. \texttt{DoctorsAPITestCase}}
+This test case validates doctor-related endpoints.
+
+\textbf{Setup:}
+\begin{itemize}
+    \item A \texttt{Doctor} object is created with attributes like \texttt{specialization}, \texttt{availability}, and \texttt{about}.
+\end{itemize}
+
+\textbf{Tests:}
+\begin{itemize}
+    \item \texttt{test\_get\_doctor\_by\_id}: Fetches a doctor by ID and verifies their details.
+    \item \texttt{test\_get\_doctors\_by\_specialization}: Retrieves doctors by specialization and ensures the correct subset is returned.
+    \item \texttt{test\_get\_all\_doctors}: Fetches all doctors and validates the total count.
+    \item \texttt{test\_post\_doctor}: Creates a new doctor with a POST request.
+    \item \texttt{test\_put\_doctor}: Updates an existing doctor's details using a PUT request.
+    \item \texttt{test\_patch\_doctor}: Partially updates a doctor's availability with a PATCH request.
+    \item \texttt{test\_delete\_doctor}: Deletes a doctor using a DELETE request.
+    \item \texttt{test\_get\_doctors\_with\_no\_free\_specialists}: Tests when no free specialists are available for a given specialization.
+\end{itemize}
+
+\subsection*{c. \texttt{NewUsersAPITestCase}}
+This test case validates general user-related operations.
+
+\textbf{Setup:}
+\begin{itemize}
+    \item Two \texttt{NewUser} objects are created for testing.
+\end{itemize}
+
+\textbf{Tests:}
+\begin{itemize}
+    \item \texttt{test\_get\_user\_by\_id}: Retrieves a user by ID.
+    \item \texttt{test\_get\_nonexistent\_user\_by\_id}: Tests querying a non-existent user.
+    \item \texttt{test\_get\_all\_users}: Fetches all users and validates the total count.
+    \item \texttt{test\_post\_new\_user}: Tests the creation of a new user.
+    \item \texttt{test\_put\_update\_user}: Updates user details with a PUT request.
+    \item \texttt{test\_patch\_update\_user}: Partially updates a user's email using PATCH.
+    \item \texttt{test\_delete\_user}: Deletes a user.
+    \item \texttt{test\_delete\_nonexistent\_user}: Tests deleting a non-existent user.
+\end{itemize}
+
+\subsection*{d. \texttt{IntermediateAPITestCase}}
+This test case manages intermediate users (e.g., admins, coordinators).
+
+\textbf{Setup:}
+\begin{itemize}
+    \item A sample intermediate user is created.
+    \item \texttt{valid\_data} and \texttt{invalid\_data} dictionaries are prepared.
+\end{itemize}
+
+\textbf{Tests:}
+\begin{itemize}
+    \item \texttt{test\_get\_all\_intermediates}: Retrieves all intermediate users.
+    \item \texttt{test\_get\_single\_intermediate\_valid\_id}: Fetches an intermediate user by a valid ID.
+    \item \texttt{test\_get\_single\_intermediate\_invalid\_id}: Tests querying a non-existent intermediate user.
+    \item \texttt{test\_post\_valid\_intermediate}: Creates a new intermediate user.
+    \item \texttt{test\_post\_invalid\_intermediate}: Ensures validation errors for invalid data.
+    \item \texttt{test\_patch\_intermediate}: Partially updates an intermediate user's \texttt{about} field.
+    \item \texttt{test\_delete\_intermediate}: Deletes an intermediate user.
+    \item \texttt{test\_delete\_invalid\_intermediate}: Tests deleting a non-existent intermediate user.
+\end{itemize}
+
+\subsection*{e. \texttt{AppointmentAPITestCase}}
+This test case focuses on appointment management endpoints.
+
+\textbf{Setup:}
+\begin{itemize}
+    \item Two \texttt{Appointment} objects are created.
+\end{itemize}
+
+\textbf{Tests:}
+\begin{itemize}
+    \item \texttt{test\_get\_all\_appointments}: Fetches all appointments.
+    \item \texttt{test\_get\_filtered\_appointments}: Filters appointments by \texttt{meeting\_Type}.
+    \item \texttt{test\_create\_valid\_appointment}: Creates a new appointment with valid data.
+    \item \texttt{test\_update\_appointment}: Updates an appointment's \texttt{disease} field.
+    \item \texttt{test\_delete\_appointment}: Deletes an appointment.
+\end{itemize}
+
+\section*{3. Key Features Tested}
+\begin{itemize}
+    \item CRUD operations.
+    \item Validation for invalid data or non-existent IDs.
+    \item Filtering results by attributes.
+    \item Secure password hashing.
+\end{itemize}
+
+\section*{4. Improvements Suggested}
+\begin{itemize}
+    \item Uncomment and refine commented tests.
+    \item Add assertions for response status codes.
+    \item Enhance validation tests for a broader range of inputs.
+    \item Include tests for user permissions and authentication.
+\end{itemize}
+
+\section*{5. Conclusion}
+The test suite is robust, leveraging DRF's \texttt{APITestCase} for comprehensive API endpoint coverage. Each test ensures correctness, reliability, and resilience of the backend.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{SE Testing ss.jpg}
+    \caption{. =$>$ SUCCESS, F =$>$ FAILURE, E =$>$ ERROR}
+    \label{fig:example_image}
+\end{figure}
+
+\end{document}
