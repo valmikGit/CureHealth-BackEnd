@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.decorators import api_view
 from .models import Doctor, Patient, NewUser, Intermediate, Appointment
 from .serializers import DoctorSerializer, PatientSerializer, NewUserSerializer, AppointmentSerializer, IntermediateSerializer
@@ -152,13 +153,39 @@ def doctors(request):
                 'error' : 'something went wrong'
             })
     
+    # elif request.method == 'PUT':
+    #     data = request.data
+    #     serializer = DoctorSerializer(data=data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors)
+
     elif request.method == 'PUT':
-        data = request.data
-        serializer = DoctorSerializer(data=data)
+        data = request.data  # Parse incoming data
+        
+        # Ensure the ID is provided
+        if 'id' not in data:
+            return Response({"error": "ID is required for update"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            doctor = Doctor.objects.get(id=data['id'])  # Retrieve doctor by ID
+        except Doctor.DoesNotExist:
+            return Response({"error": "Doctor not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Map specialization input if necessary
+        if 'specialization' in data:
+            try:
+                data['specialization'] = Doctor.Specialization[data['specialization'].upper()]
+            except KeyError:
+                return Response({"error": "Invalid specialization"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = DoctorSerializer(doctor, data=data, partial=False)  # Update the object
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
     elif request.method == 'PATCH':
         data = request.data
@@ -184,17 +211,18 @@ def new_Users(request):
     user_id = request.query_params.get('id', None)
     if user_id is not None:
         try:
-            new_User = NewUser.objects.filter(id=user_id)
-            if(not new_User.exists()):
-                return Response({
-                    'message' : 'User with this ID does not exist.'
-                })
-            serializer = NewUserSerializer(new_User)
+            # Use .get() to fetch a single user
+            new_User = NewUser.objects.get(id=user_id)
+            serializer = NewUserSerializer(new_User)  # No `many=True` needed for a single object
             return Response(serializer.data)
+        except NewUser.DoesNotExist:
+            return Response({
+                'message': 'User with this ID does not exist.'
+            }, status=404)
         except Exception as e:
             return Response({
-                'status' : 404,
-                'message' : f"Error : {e}"
+                'status': 404,
+                'message': f"Error: {e}"
             })
     else:
         if request.method == 'GET':
@@ -213,11 +241,21 @@ def new_Users(request):
     
         elif request.method == 'PUT':
             data = request.data
-            serializer = NewUserSerializer(data=data)
+            try:
+                # Retrieve the object to be updated
+                obj = NewUser.objects.get(id=data['id'])
+            except NewUser.DoesNotExist:
+                return Response({'message': 'User does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
+            # Pass the object as instance to update it
+            serializer = NewUserSerializer(obj, data=data)
             if serializer.is_valid():
+                if 'password' in serializer.validated_data:
+                    # Hash the password if it's being updated
+                    serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
                 serializer.save()
                 return Response(serializer.data)
-            return Response(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
         elif request.method == 'PATCH':
             data = request.data
@@ -301,15 +339,29 @@ def intermediates(request):
             return Response(serializer.data)
         return Response(serializer.errors)
     
+    # elif request.method == 'DELETE':
+    #     data = request.data
+    #     try:
+    #         obj = Intermediate.objects.get(id=data['id'])
+    #         name = obj.username
+    #         obj.delete()
+    #         return Response({'message' : f"{name} deleted successfully."})
+    #     except Intermediate.DoesNotExist as e:
+    #         return Response({'message' : f"Error is {e}"})
+
     elif request.method == 'DELETE':
         data = request.data
+        intermediate_id = data.get('id')  # Safely get the ID
+        if not intermediate_id:
+            return Response({'message': 'ID is required for deletion.'}, status=400)
+
         try:
-            obj = Intermediate.objects.get(id=data['id'])
+            obj = Intermediate.objects.get(id=intermediate_id)
             name = obj.username
             obj.delete()
-            return Response({'message' : f"{name} deleted successfully."})
-        except Exception as e:
-            return Response({'message' : f"Error is {e}"})
+            return Response({'message': f"{name} deleted successfully."})
+        except Intermediate.DoesNotExist:
+            return Response({'message': f"User with ID {intermediate_id} does not exist."}, status=404)
         
 @api_view(['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
 def appointments_View(request):
@@ -392,11 +444,12 @@ def appointments_View(request):
         data = request.data
         try:
             obj = Appointment.objects.get(id=data['id'])
-            name = obj.username
-            obj.delete()
-            return Response({'message' : f"{name} deleted successfully."})
+            obj.delete()  # Remove the invalid `username` reference
+            return Response({'message': f"Appointment with ID {data['id']} deleted successfully."})
+        except Appointment.DoesNotExist:
+            return Response({'message': f"Appointment with ID {data['id']} does not exist."}, status=404)
         except Exception as e:
-            return Response({'message' : f"Error is {e}"})
+            return Response({'message': f"Error: {e}"}, status=500)
     
 @api_view(['GET'])
 def home(request):
