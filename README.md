@@ -275,7 +275,7 @@ Ensure the following environment variables are set:
 
 ## Contributions
 
-- [Vaibhav Mittal](https://github.com/Vebstere)
+- [Vaibhav Mittal](https://github.com/Vaibhavvv24)
 - [Krish Dave](https://github.com/KrishDave1)
 - [Valmik Belgaonkar](https://github.com/valmikGit)
 - [Chirag MV](https://github.com/ChiragMV)
