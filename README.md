@@ -7,34 +7,42 @@ The Synergy_Backend Django project serves as the robust backend for the CureHeal
 ## Key Features
 
 ### 1. User Authentication
+
 - Utilizes JWT (JSON Web Token) authentication for secure user authentication.
 - Configured with customizable token lifetimes and security settings.
 
 ### 2. WebSocket Communication
+
 - Implements WebSocket communication using Django Channels for real-time interactions.
 - Configured with Redis as the channel layer for handling WebSocket connections.
 
 ### 3. Email Sending
+
 - Integrates Django's email backend to send emails for various functionalities.
 - Configured to use Gmail SMTP for reliable email delivery.
 
 ### 4. Video Calling (Agora Integration)
+
 - Integrates Agora SDK for seamless video calling functionality.
 - Enables direct communication between patients and doctors.
 
 ### 5. Chat Functionality
+
 - Implements chat functionality using Django Channels and Redis.
 - Supports real-time communication between users and healthcare professionals.
 
 ### 6. RESTful API
+
 - Utilizes Django Rest Framework for building a RESTful API.
 - Implements various endpoints to support frontend functionalities.
 
 ### 7. CORS and Security
+
 - Configures CORS headers to allow cross-origin resource sharing.
 - Implements middleware for security measures such as CSRF protection.
 
 ### 8. Admin Panel
+
 - Provides a customizable admin panel for easy management of data.
 - Allows administrators to monitor and manage the application efficiently.
 
@@ -111,29 +119,32 @@ Ensure you have the following environment variables set:
 
 ## Installation
 
-1. **Clone the Repository:** 
+1. **Clone the Repository:**
+
    ```bash
    git clone https://github.com/valmikGit/CureHealth-BackEnd
    ```
 
 2. **Install Dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. **Apply Migrations:**
+
    ```bash
    python manage.py migrate
    ```
 
 4. **Run the Development Server:**
+
    ```bash
    python manage.py runserver
    ```
 
 5. **Access the Admin Panel:**
    - Open your browser and go to `http://localhost:8000/admin/` to access the Django admin panel.
-
 
 ## Environment Variables
 
@@ -145,10 +156,16 @@ Ensure the following environment variables are set:
 - `REDIS_URL`: URL for Redis.
 
 ## Contributions
-- [Vaibhav Mittal](https://github.com/Vebstere) 
+
+- [Vaibhav Mittal](https://github.com/Vebstere)
 - [Krish Dave](https://github.com/KrishDave1)
 - [Valmik Belgaonkar](https://github.com/valmikGit)
 - [Chirag MV](https://github.com/ChiragMV)
 
 ## Contact Us
+
 For any additional information or inquiries, please contact us on our website [gmail](synergybackend12@gmail.com).
+
+## Testing
+
+The report for Testing is in this repository which has 34 tests for API's relating to doctor, newUser, Patient, Intermediary and Appointmemts. The report name is SE_Testing.tex which is a latex source file and the PDF is SE_TESTING_Report.
