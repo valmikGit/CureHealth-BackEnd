@@ -7,36 +7,162 @@ The Synergy_Backend Django project serves as the robust backend for the CureHeal
 ## Key Features
 
 ### 1. User Authentication
+
 - Utilizes JWT (JSON Web Token) authentication for secure user authentication.
 - Configured with customizable token lifetimes and security settings.
 
 ### 2. WebSocket Communication
+
 - Implements WebSocket communication using Django Channels for real-time interactions.
 - Configured with Redis as the channel layer for handling WebSocket connections.
 
 ### 3. Email Sending
+
 - Integrates Django's email backend to send emails for various functionalities.
 - Configured to use Gmail SMTP for reliable email delivery.
+<!--
 
 ### 4. Video Calling (Agora Integration)
+
 - Integrates Agora SDK for seamless video calling functionality.
-- Enables direct communication between patients and doctors.
+- Enables direct communication between patients and doctors. -->
 
-### 5. Chat Functionality
+<!-- ### 5. Chat Functionality
+
 - Implements chat functionality using Django Channels and Redis.
-- Supports real-time communication between users and healthcare professionals.
+- Supports real-time communication between users and healthcare professionals. -->
 
-### 6. RESTful API
+### 4. RESTful API
+
 - Utilizes Django Rest Framework for building a RESTful API.
 - Implements various endpoints to support frontend functionalities.
 
-### 7. CORS and Security
+### 5. CORS and Security
+
 - Configures CORS headers to allow cross-origin resource sharing.
 - Implements middleware for security measures such as CSRF protection.
 
-### 8. Admin Panel
+### 6. Admin Panel
+
 - Provides a customizable admin panel for easy management of data.
 - Allows administrators to monitor and manage the application efficiently.
+
+# API Documentation
+
+This document provides a detailed overview of the core APIs implemented in the project, along with their functionalities.
+
+---
+
+## Patient Management APIs
+
+1. **Get All Patients**
+
+   - **Endpoint:** `/api/patients/`
+   - **Method:** GET
+   - **Description:** Fetches a list of all registered patients. It validates the data structure and ensures the returned list matches the database.
+
+2. **Get Patient by ID**
+   - **Endpoint:** `/api/patients/{id}/`
+   - **Method:** GET
+   - **Description:** Retrieves details of a specific patient using their ID. It checks the correctness of the response against the database entry.
+
+---
+
+## Doctor Management APIs
+
+1. **Get Doctors by Specialization**
+
+   - **Endpoint:** `/api/doctors/specialization/{specialization}/`
+   - **Method:** GET
+   - **Description:** Returns a subset of doctors filtered by their specialization. Ensures the correct application of filtering logic.
+
+2. **Post New Doctor**
+
+   - **Endpoint:** `/api/doctors/`
+   - **Method:** POST
+   - **Description:** Creates a new doctor record with given attributes like specialization and availability. It verifies that the doctor is added to the database with valid inputs.
+
+3. **Update Doctor Details**
+
+   - **Endpoint:** `/api/doctors/{id}/`
+   - **Method:** PUT
+   - **Description:** Updates the entire profile of an existing doctor. It ensures the old data is replaced with the updated details.
+
+4. **Partial Update Doctor**
+
+   - **Endpoint:** `/api/doctors/{id}/`
+   - **Method:** PATCH
+   - **Description:** Updates specific attributes of a doctor's profile, such as availability. Validates that only targeted fields are modified without affecting others.
+
+5. **Delete Doctor**
+   - **Endpoint:** `/api/doctors/{id}/`
+   - **Method:** DELETE
+   - **Description:** Deletes a doctor record using their ID. Ensures the record is removed from the database and returns appropriate error messages if the doctor does not exist.
+
+---
+
+## User Management APIs
+
+1. **Get All Users**
+
+   - **Endpoint:** `/api/users/`
+   - **Method:** GET
+   - **Description:** Fetches a list of all users in the system. It validates the response count and data attributes.
+
+2. **Post New User**
+
+   - **Endpoint:** `/api/users/`
+   - **Method:** POST
+   - **Description:** Adds a new user to the system. Verifies input validation and the successful creation of user records.
+
+3. **Delete User**
+   - **Endpoint:** `/api/users/{id}/`
+   - **Method:** DELETE
+   - **Description:** Deletes a specific user by ID. Confirms the deletion and checks for proper error handling if the user does not exist.
+
+---
+
+## Appointment Management APIs
+
+1. **Get All Appointments**
+
+   - **Endpoint:** `/api/appointments/`
+   - **Method:** GET
+   - **Description:** Retrieves all scheduled appointments. Validates the data against stored records and ensures correct response formatting.
+
+2. **Filtered Appointments**
+
+   - **Endpoint:** `/api/appointments/filter/`
+   - **Method:** GET
+   - **Description:** Fetches appointments filtered by attributes like meeting type. Confirms the filters are applied correctly and the results are accurate.
+
+3. **Create Appointment**
+
+   - **Endpoint:** `/api/appointments/`
+   - **Method:** POST
+   - **Description:** Allows the creation of a new appointment. Ensures input data is validated and successfully stored in the system.
+
+4. **Update Appointment**
+
+   - **Endpoint:** `/api/appointments/{id}/`
+   - **Method:** PUT
+   - **Description:** Updates details of an existing appointment, such as the disease field. Validates the response and database changes.
+
+5. **Delete Appointment**
+   - **Endpoint:** `/api/appointments/{id}/`
+   - **Method:** DELETE
+   - **Description:** Deletes a specific appointment by ID. Confirms the appointment's removal and checks for error messages if the ID does not exist.
+
+---
+
+## Testing Information
+
+- **Framework Used:** Django REST Framework
+- **Testing Suite:** `APITestCase` and `APIClient`
+- **Key Features Tested:**
+  - CRUD operations.
+  - Validation for invalid data or non-existent IDs.
+  - Filtering results by attributes.
 
 ## Django Project Overview
 
@@ -111,29 +237,32 @@ Ensure you have the following environment variables set:
 
 ## Installation
 
-1. **Clone the Repository:** 
+1. **Clone the Repository:**
+
    ```bash
    git clone https://github.com/valmikGit/CureHealth-BackEnd
    ```
 
 2. **Install Dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 3. **Apply Migrations:**
+
    ```bash
    python manage.py migrate
    ```
 
 4. **Run the Development Server:**
+
    ```bash
    python manage.py runserver
    ```
 
 5. **Access the Admin Panel:**
    - Open your browser and go to `http://localhost:8000/admin/` to access the Django admin panel.
-
 
 ## Environment Variables
 
@@ -145,10 +274,16 @@ Ensure the following environment variables are set:
 - `REDIS_URL`: URL for Redis.
 
 ## Contributions
-- [Vaibhav Mittal](https://github.com/Vebstere) 
+
+- [Vaibhav Mittal](https://github.com/Vaibhavvv24)
 - [Krish Dave](https://github.com/KrishDave1)
 - [Valmik Belgaonkar](https://github.com/valmikGit)
 - [Chirag MV](https://github.com/ChiragMV)
 
 ## Contact Us
+
 For any additional information or inquiries, please contact us on our website [gmail](synergybackend12@gmail.com).
+
+## Testing
+
+The report for Testing is in this repository which has 34 tests for API's relating to doctor, newUser, Patient, Intermediary and Appointmemts. The report name is SE_Testing.tex which is a latex source file and the PDF is SE_TESTING_Report.
