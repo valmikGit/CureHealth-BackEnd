@@ -352,7 +352,6 @@ class IntermediateAPITestCase(APITestCase):
         self.assertIn("User with ID", response.data['message'])
 
 class AppointmentAPITestCase(APITestCase):
-
     def setUp(self):
         # Set up initial data
         self.appointment1 = Appointment.objects.create(
